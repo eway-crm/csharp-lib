@@ -26,7 +26,7 @@ namespace eWayCRM.API
         /// <summary>
         /// Initializes a new instance of the <see cref="Connection" /> class.
         /// </summary>
-        /// <param name="apiServiceUri">The API service URI.</param>
+        /// <param name="apiServiceUri">The API service URI. Ex. 'https://server.mycompany.com/eway' or 'https://server.local:4443/eWay/WcfService/Service.svc'</param>
         /// <param name="username">The eWay-CRM username. Ex. 'jsmith'.</param>
         /// <param name="passwordHash">Password hash. Use the hash made with "SecurityApp" or HashPassword.exe. MD5 hashes are accepted as well (unless AD HTTP Authentication between WS and WCF is activated).</param>
         /// <param name="appIdentifier">The application identifier. Must contain at least on alphabetic character on the beginning and at least one numeric character at the end.</param>
@@ -60,7 +60,16 @@ namespace eWayCRM.API
 
             if (!apiServiceUri.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))
             {
-                apiServiceUri = (new Uri(new Uri(apiServiceUri), "WcfService/Service.svc")).ToString();
+                UriBuilder builder = new UriBuilder(apiServiceUri);
+                if (builder.Path.EndsWith("/"))
+                {
+                    builder.Path = builder.Path + "WcfService/Service.svc";
+                }
+                else
+                {
+                    builder.Path = builder.Path + "/WcfService/Service.svc";
+                }
+                apiServiceUri = builder.ToString();
             }
 
             this.serviceUri = apiServiceUri;
