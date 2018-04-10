@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>eWay-CRM API Connector</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/rstefko/eway-crm-csharp-lib/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/rstefko/eway-crm-csharp-lib</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>eWay-CRM API C# Library</description>
+    <copyright>Copyright 2018</copyright>
+    <tags>eWay CRM eWay-CRM API</tags>
+	  <dependencies>
+      <dependency id="Newtonsoft.Json" version="11.0.2" />
+    </dependencies>
+  </metadata>
+</package>
