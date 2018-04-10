@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using eWayCRM.API.Exceptions;
 
 namespace eWayCRM.API
 {
@@ -22,22 +23,40 @@ namespace eWayCRM.API
 
         private Guid? sessionId;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Connection" /> class.
+        /// </summary>
+        /// <param name="apiServiceUri">The API service URI.</param>
+        /// <param name="username">The eWay-CRM username. Ex. 'jsmith'.</param>
+        /// <param name="passwordHash">Password hash. Use the hash made with "SecurityApp" or HashPassword.exe. MD5 hashes are accepted as well (unless AD HTTP Authentication between WS and WCF is activated).</param>
+        /// <param name="appIdentifier">The application identifier. Must contain at least on alphabetic character on the beginning and at least one numeric character at the end.</param>
+        /// <exception cref="ArgumentNullException">eWay-CRM API service uri was not supplied. - apiServiceUri
+        /// or
+        /// eWay-CRM username was not supplied. - username
+        /// or
+        /// eWay-CRM password hash was not supplied. - passwordHash
+        /// or
+        /// The client app identifier was not supplied. - appIdentifier</exception>
+        /// <exception cref="ArgumentException">The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API. - apiServiceUri</exception>
         public Connection(string apiServiceUri, string username, string passwordHash, string appIdentifier = "eWayCRM.API.CSharpConnector10")
         {
             if (string.IsNullOrEmpty(apiServiceUri))
-                throw new ArgumentNullException("eWay-CRM API service uri was not supplied.", nameof(apiServiceUri));
+                throw new ArgumentNullException(nameof(apiServiceUri), "eWay-CRM API service uri was not supplied.");
 
             if (string.IsNullOrEmpty(username))
-                throw new ArgumentNullException("eWay-CRM username was not supplied.", nameof(username));
+                throw new ArgumentNullException(nameof(username), "eWay-CRM username was not supplied.");
 
             if (string.IsNullOrEmpty(passwordHash))
-                throw new ArgumentNullException("eWay-CRM password hash was not supplied.", nameof(passwordHash));
+                throw new ArgumentNullException(nameof(passwordHash), "eWay-CRM password hash was not supplied.");
 
             if (string.IsNullOrEmpty(appIdentifier))
-                throw new ArgumentNullException("The client app identifier was not supplied.", nameof(appIdentifier));
+                throw new ArgumentNullException(nameof(appIdentifier), "The client app identifier was not supplied.");
 
             if (apiServiceUri.EndsWith(".asmx", StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException("The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API.", nameof(apiServiceUri));
+
+            if (!Regex.IsMatch(appIdentifier, "^\\w.*\\d$"))
+                throw new ArgumentException("The client app identifier must contain at least one alphabetic character on the beginning and at least one numeric character at the end.", nameof(appIdentifier));
 
             if (!apiServiceUri.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))
             {
@@ -50,8 +69,38 @@ namespace eWayCRM.API
             this.appIdentifier = appIdentifier;
         }
 
+        /// <summary>
+        /// Calls the given method against the eWay-CRM API.
+        /// </summary>
+        /// <param name="methodName">Name of the method. Ex. 'SaveCompany'</param>
+        /// <param name="data">The JSON parameters posted to the method. Posting sessionId is not necessary. Ex.:
+        /// {
+        ///     transmitObject: {
+        ///         FileAs: "My New Company"
+        ///     }
+        /// }</param>
+        /// <returns>
+        /// JSON data returned by the API service.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// The method name was not supplied. - methodName
+        /// or
+        /// data - The parameter JSON data were not supplied. Supply at least an empty JSON object.
+        /// </exception>
+        /// <exception cref="LoginException">
+        /// Logging into eWay-CRM was unsuccessful.
+        /// </exception>
+        /// <exception cref="ResponseException">
+        /// Method calling ended up badly.
+        /// </exception>
         public JObject CallMethod(string methodName, JObject data)
         {
+            if (string.IsNullOrEmpty(methodName))
+                throw new ArgumentNullException("The method name was not supplied.", nameof(methodName));
+
+            if (data == null)
+                throw new ArgumentNullException(nameof(data), "The parameter JSON data were not supplied. Supply at least an empty JSON object.");
+
             return this.CallMethod(methodName, data, true);
         }
 
@@ -67,7 +116,7 @@ namespace eWayCRM.API
                 return this.CallMethod(methodName, data, false);
             }
             if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
-                throw new InvalidOperationException($"Unable to call wcf method '{methodName}'. Return code is '{response.GetValue("ReturnCode").ToString()}' with message: {response.GetValue("Description").ToString()}");
+                throw new ResponseException(methodName, response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
             return response;
         }
 
@@ -88,20 +137,17 @@ namespace eWayCRM.API
                 appVersion = this.appIdentifier
             }));
             if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
-                throw new InvalidOperationException($"Unable to connect to the wcf {this.serviceUri}. Login returned '{response.GetValue("ReturnCode").ToString()}' with message: {response.GetValue("Description").ToString()}");
+                throw new LoginException(response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
             this.sessionId = new Guid(response.Value<string>("SessionId"));
         }
 
         private JObject Call(string methodName, JObject data)
         {
             if (string.IsNullOrEmpty(methodName))
-            {
                 throw new ArgumentNullException(nameof(methodName));
-            }
+
             if (data == null)
-            {
                 throw new ArgumentNullException(nameof(data));
-            }
 
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(this.GetMethodUri(methodName));
             webRequest.Method = WebRequestMethods.Http.Post;
@@ -130,9 +176,8 @@ namespace eWayCRM.API
                 }
             }
             if (string.IsNullOrEmpty(responseJson))
-            {
                 throw new InvalidOperationException("Wcf returned nothing. That's strange.");
-            }
+
             JObject result = JObject.Parse(responseJson);
 
             return result;
