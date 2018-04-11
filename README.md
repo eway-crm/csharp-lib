@@ -37,7 +37,7 @@ if (((JArray)searchedCompaniesResopnse["Data"]).Count != 0)
         transmitObject = new
         {
             Companies_CompanyGuid = ((JArray)searchedCompaniesResopnse["Data"]).First.Value<string>("ItemGUID"),
-            FileAs = "I've found the company vie the API!",
+            FileAs = "I've found the company via the API!",
             Note = "Using the eWay-CRM API C# Library",
             EventStart = DateTime.Now.ToString("u"),
             EventEnd = DateTime.Now.ToString("u")
