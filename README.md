@@ -24,25 +24,25 @@ The following code shows an example how to load some data from eWay-CRM and then
 ```
 var connection = new eWayCRM.API.Connection("https://server.mycompany.com/eway", "jsmith", "YOUR_PASSWORD_HASH");
 var searchedCompaniesResopnse = connection.CallMethod("SearchCompanies", JObject.FromObject(new
-	{
-		transmitObject = new
-		{
-			FileAs = "Contoso Ltd."
-		}
-	}));
+{
+    transmitObject = new
+    {
+        FileAs = "Contoso Ltd."
+    }
+}));
 if (((JArray)searchedCompaniesResopnse["Data"]).Count != 0)
 {
-	connection.CallMethod("SaveJournal", JObject.FromObject(new
-	{
-		transmitObject = new
-		{
-			Companies_CompanyGuid = ((JArray)searchedCompaniesResopnse["Data"]).First.Value<string>("ItemGUID"),
-			FileAs = "I've found the company vie the API!",
-			Note = "Using the eWay-CRM API C# Library",
-			EventStart = DateTime.Now.ToString("u"),
-			EventEnd = DateTime.Now.ToString("u")
-		}
-	}));
+    connection.CallMethod("SaveJournal", JObject.FromObject(new
+    {
+        transmitObject = new
+        {
+            Companies_CompanyGuid = ((JArray)searchedCompaniesResopnse["Data"]).First.Value<string>("ItemGUID"),
+            FileAs = "I've found the company vie the API!",
+            Note = "Using the eWay-CRM API C# Library",
+            EventStart = DateTime.Now.ToString("u"),
+            EventEnd = DateTime.Now.ToString("u")
+        }
+    }));
 }
 ```
 
