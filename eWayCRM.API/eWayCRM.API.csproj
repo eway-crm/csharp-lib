@@ -53,6 +53,7 @@
     <None Include="..\..\eWay-3\eWayLibrary\MemosKey.snk">
       <Link>MemosKey.snk</Link>
     </None>
+    <None Include="CreateNuGetPackage.bat" />
     <None Include="eWayCRM.API.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
