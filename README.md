@@ -46,5 +46,6 @@ if (((JArray)searchedCompaniesResopnse["Data"]).Count != 0)
 }
 ```
 
-The code above ends up like this:
+The code above will result like this:
+
 ![Contoso company with a new journal record](example-contoso-journal.png)
