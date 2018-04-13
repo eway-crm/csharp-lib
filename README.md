@@ -21,7 +21,7 @@ The actual usage is then the same as it would be for example with [PHP](https://
 
 The following code shows an example how to load some data from eWay-CRM and then save a journal entry. It searches for a company named 'Contoso Ltd.' and if it finds it, creates a journal record connected to the found company.
 
-```
+```C#
 var connection = new eWayCRM.API.Connection("https://server.mycompany.com/eway", "jsmith", "YOUR_PASSWORD_HASH");
 var searchedCompaniesResopnse = connection.CallMethod("SearchCompanies", JObject.FromObject(new
 {
