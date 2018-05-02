@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using eWayCRM.API.Exceptions;
+using System.Net.Sockets;
+using System.Net.NetworkInformation;
 
 namespace eWayCRM.API
 {
@@ -20,6 +22,7 @@ namespace eWayCRM.API
         private readonly string username;
         private readonly string passwordHash;
         private readonly string appIdentifier;
+        private readonly string clientMachineIdentifier;
 
         private Guid? sessionId;
 
@@ -29,7 +32,8 @@ namespace eWayCRM.API
         /// <param name="apiServiceUri">The API service URI. Ex. 'https://server.mycompany.com/eway' or 'https://server.local:4443/eWay/WcfService/Service.svc'</param>
         /// <param name="username">The eWay-CRM username. Ex. 'jsmith'.</param>
         /// <param name="passwordHash">Password hash. Use the hash made with "SecurityApp" or HashPassword.exe. MD5 hashes are accepted as well (unless AD HTTP Authentication between WS and WCF is activated).</param>
-        /// <param name="appIdentifier">The application identifier. Must contain at least on alphabetic character on the beginning and at least one numeric character at the end.</param>
+        /// <param name="appIdentifier">The application identifier. Must contain at least two alphabetic characters on the beginning and at least one numeric character at the end.</param>
+        /// <param name="clientMachineIdentifier">The unique identifier, of the client machine. Usually a MAC address is used. Optional. If you leave it null, MAC address is used.</param>
         /// <exception cref="ArgumentNullException">eWay-CRM API service uri was not supplied. - apiServiceUri
         /// or
         /// eWay-CRM username was not supplied. - username
@@ -38,7 +42,7 @@ namespace eWayCRM.API
         /// or
         /// The client app identifier was not supplied. - appIdentifier</exception>
         /// <exception cref="ArgumentException">The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API. - apiServiceUri</exception>
-        public Connection(string apiServiceUri, string username, string passwordHash, string appIdentifier = "eWayCRM.API.CSharpConnector10")
+        public Connection(string apiServiceUri, string username, string passwordHash, string appIdentifier = "eWayCRM.API.CSharpConnector10", string clientMachineIdentifier = null)
         {
             if (string.IsNullOrEmpty(apiServiceUri))
                 throw new ArgumentNullException(nameof(apiServiceUri), "eWay-CRM API service uri was not supplied.");
@@ -55,8 +59,13 @@ namespace eWayCRM.API
             if (apiServiceUri.EndsWith(".asmx", StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException("The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API.", nameof(apiServiceUri));
 
-            if (!Regex.IsMatch(appIdentifier, "^\\w.*\\d$"))
+            if (!Regex.IsMatch(appIdentifier, "^[a-zA-Z][a-zA-Z].*\\d$"))
                 throw new ArgumentException("The client app identifier must contain at least one alphabetic character on the beginning and at least one numeric character at the end.", nameof(appIdentifier));
+
+            if (string.IsNullOrEmpty(clientMachineIdentifier))
+            {
+                clientMachineIdentifier = GetClientIdentification(apiServiceUri);
+            }
 
             if (!apiServiceUri.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))
             {
@@ -76,6 +85,7 @@ namespace eWayCRM.API
             this.username = username;
             this.passwordHash = passwordHash;
             this.appIdentifier = appIdentifier;
+            this.clientMachineIdentifier = clientMachineIdentifier;
         }
 
         /// <summary>
@@ -143,7 +153,8 @@ namespace eWayCRM.API
             {
                 userName = this.username,
                 passwordHash = this.passwordHash,
-                appVersion = this.appIdentifier
+                appVersion = this.appIdentifier,
+                clientMachineIdentifier = this.clientMachineIdentifier
             }));
             if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
                 throw new LoginException(response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
@@ -195,6 +206,32 @@ namespace eWayCRM.API
         private string GetMethodUri(string methodName)
         {
             return this.serviceUri + "/" + methodName;
+        }
+
+        private static string GetClientIdentification(string uriString)
+        {
+            Uri uri = new Uri(uriString);
+            return GetClientIdentification(uri.DnsSafeHost, uri.Port);
+        }
+
+        private static string GetClientIdentification(string hostName, int port)
+        {
+            if (string.IsNullOrEmpty(hostName))
+                throw new ArgumentNullException(nameof(hostName));
+
+            NetworkInterface networkInterface = null;
+
+            TcpClient tcpClient = new TcpClient(hostName, port);
+            IPAddress localAddress = ((IPEndPoint)tcpClient.Client.LocalEndPoint).Address;
+
+            networkInterface = NetworkInterface.GetAllNetworkInterfaces()
+                .Where(n => n.GetIPProperties().UnicastAddresses.Any(x => x.Address.Equals(localAddress)))
+                .FirstOrDefault();
+
+            if (networkInterface == null)
+                return Environment.MachineName;
+
+            return string.Join(":", networkInterface.GetPhysicalAddress().GetAddressBytes().Select(b => b.ToString("X2")));
         }
     }
 }
