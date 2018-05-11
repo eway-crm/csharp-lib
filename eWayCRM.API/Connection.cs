@@ -65,6 +65,8 @@ namespace eWayCRM.API
             if (string.IsNullOrEmpty(clientMachineIdentifier))
             {
                 clientMachineIdentifier = GetClientIdentification(apiServiceUri);
+                if (string.IsNullOrEmpty(clientMachineIdentifier))
+                    throw new ClientMachineIdentifierDeterminationException($"Unable to determine the client machine unique identifier automatically. Please supply it manually via the '{nameof(clientMachineIdentifier)}' argument.");
             }
 
             if (!apiServiceUri.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))
@@ -219,16 +221,20 @@ namespace eWayCRM.API
             if (string.IsNullOrEmpty(hostName))
                 throw new ArgumentNullException(nameof(hostName));
 
-            NetworkInterface networkInterface = null;
 
             TcpClient tcpClient = new TcpClient(hostName, port);
             IPAddress localAddress = ((IPEndPoint)tcpClient.Client.LocalEndPoint).Address;
 
-            networkInterface = NetworkInterface.GetAllNetworkInterfaces()
+            NetworkInterface networkInterface = NetworkInterface.GetAllNetworkInterfaces()
                 .Where(n => n.GetIPProperties().UnicastAddresses.Any(x => x.Address.Equals(localAddress)))
                 .FirstOrDefault();
 
             if (networkInterface == null)
+                return Environment.MachineName;
+
+            byte[] addressBytes = networkInterface.GetPhysicalAddress().GetAddressBytes();
+
+            if (addressBytes == null || addressBytes.Length == 0)
                 return Environment.MachineName;
 
             return string.Join(":", networkInterface.GetPhysicalAddress().GetAddressBytes().Select(b => b.ToString("X2")));
