@@ -23,6 +23,7 @@ namespace eWayCRM.API
         private readonly string passwordHash;
         private readonly string appIdentifier;
         private readonly string clientMachineIdentifier;
+        private readonly string upploadMethodName = "SaveBinaryAttachment";
 
         private Guid? sessionId;
 
@@ -205,9 +206,97 @@ namespace eWayCRM.API
             return result;
         }
 
+        public JObject UploadFile(string filePath, out Guid itemGuid, string fileName = null)
+        {
+            itemGuid = Guid.NewGuid();
+            return this.UploadFile(filePath, itemGuid, fileName);
+        }
+
+        public JObject UploadFile(string filePath, Guid itemGuid, string fileName = null)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                fileName = Path.GetFileName(filePath);
+
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                return this.UploadFile(itemGuid, fileStream, fileName);
+            }
+        }
+
+        public JObject UploadFile(out Guid itemGuid, Stream stream, string fileName)
+        {
+            itemGuid = Guid.NewGuid();
+            return this.UploadFile(itemGuid, stream, fileName);
+        }
+
+        public JObject UploadFile(Guid itemGuid, Stream stream, string fileName)
+        {
+            return this.UploadFile(itemGuid, stream, fileName, true);
+        }
+
+        private JObject UploadFile(Guid itemGuid, Stream stream, string fileName, bool repeatSession)
+        {
+            this.EnsureLogin();
+            JObject response = this.Upload(itemGuid, stream, fileName);
+            if (response.GetValue("ReturnCode").ToString() == "rcBadSession" && repeatSession)
+            {
+                this.LogIn();
+                return this.UploadFile(itemGuid, stream, fileName, false);
+            }
+            if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
+                throw new ResponseException(upploadMethodName, response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
+            return response;
+        }
+
+        private JObject Upload(Guid itemGuid, Stream stream, string fileName)
+        {
+            if (!stream.CanRead)
+                throw new ArgumentException("Stream must be able to read!", nameof(stream));
+
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(this.GetFileUploadUri(itemGuid, fileName));
+            webRequest.Method = WebRequestMethods.Http.Post;
+            webRequest.ContentType = "application/octet-stream";
+
+            using (Stream writeStream = webRequest.GetRequestStream())
+            {
+                byte[] buffer = new byte[4 * 1024];
+                int bytesRead = 0;
+                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    writeStream.Write(buffer, 0, bytesRead);
+                }
+            }
+
+            string responseJson = null;
+            using (HttpWebResponse httpResponse = (HttpWebResponse)webRequest.GetResponse())
+            {
+                using (Stream responseStream = httpResponse.GetResponseStream())
+                {
+                    if (responseStream != null)
+                    {
+                        using (StreamReader streamReader = new StreamReader(responseStream))
+                        {
+                            responseJson = streamReader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+            if (string.IsNullOrEmpty(responseJson))
+                throw new InvalidOperationException("Wcf returned nothing. That's strange.");
+
+            JObject result = JObject.Parse(responseJson);
+
+            return result;
+        }
+
         private string GetMethodUri(string methodName)
         {
             return this.serviceUri + "/" + methodName;
+        }
+
+        private string GetFileUploadUri(Guid itemGuid, string FileName)
+        {
+            return ($"{this.serviceUri}/{upploadMethodName}?sessionId={this.sessionId}&itemGuid={itemGuid}&fileName={FileName}");
         }
 
         private static string GetClientIdentification(string uriString)
