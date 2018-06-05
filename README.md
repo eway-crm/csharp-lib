@@ -19,6 +19,8 @@ This library wraps the communication with JSON API. To provide the most variabil
 
 The actual usage is then the same as it would be for example with [PHP](https://github.com/rstefko/eway-crm-php-lib). See the [documentation](https://kb.eway-crm.com/documentation/6-add-ins/6-7-api-1) for more.
 
+### Load and Store Items
+
 The following code shows an example how to load some data from eWay-CRM and then save a journal entry. It searches for a company named 'Contoso Ltd.' and if it finds it, creates a journal record connected to the found company.
 
 ```csharp
@@ -49,3 +51,22 @@ if (((JArray)searchedCompaniesResopnse["Data"]).Count != 0)
 The code above will result like this:
 
 ![Contoso company with a new journal record](example-contoso-journal.png)
+
+### Creating Documents
+
+The following code shows an example how to save document to eWay-CRM. The document is first uploaded as binary data and then saved in eWay-CRM.
+
+```csharp
+var connection = new eWayCRM.API.Connection("https://server.mycompany.com/eway", "jsmith", "YOUR_PASSWORD_HASH");
+Connection.UploadFile(@"C:\Users\jpatera\Downloads\170724_15_Setangibeach.mp4", out Guid Guid);
+Connection.CallMethod("SaveDocument", JObject.FromObject(new
+{
+	transmitObject = new
+    {
+        ItemGUID = Guid,
+        FileAs = "170724_15_Setangibeach.mp4",
+        DocName = "170724_15_Setangibeach",
+        Extension = "mp4",
+        DocSize = File.ReadAllBytes(@"C:\Users\jpatera\Downloads\170724_15_Setangibeach.mp4").Length
+    }
+}));
