@@ -58,15 +58,15 @@ The following code shows an example how to save document to eWay-CRM. The docume
 
 ```csharp
 var connection = new eWayCRM.API.Connection("https://server.mycompany.com/eway", "jsmith", "YOUR_PASSWORD_HASH");
-Connection.UploadFile(@"C:\Users\jpatera\Downloads\170724_15_Setangibeach.mp4", out Guid Guid);
+Connection.UploadFile(@"C:\Users\User\Documents\File.txt", out Guid Guid);
 Connection.CallMethod("SaveDocument", JObject.FromObject(new
 {
 	transmitObject = new
     {
         ItemGUID = Guid,
-        FileAs = "170724_15_Setangibeach.mp4",
-        DocName = "170724_15_Setangibeach",
-        Extension = "mp4",
-        DocSize = File.ReadAllBytes(@"C:\Users\jpatera\Downloads\170724_15_Setangibeach.mp4").Length
+        FileAs = "File.txt",
+        DocName = "File",
+        Extension = "txt",
+        DocSize = documentSize
     }
 }));
