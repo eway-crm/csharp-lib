@@ -244,6 +244,12 @@ namespace eWayCRM.API
         /// </exception>
         public JObject UploadFile(string filePath, Guid itemGuid, string fileName = null)
         {
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentNullException(nameof(filePath));
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("The file for uploading was not found.", filePath);
+
             if (string.IsNullOrEmpty(fileName))
                 fileName = Path.GetFileName(filePath);
 
@@ -297,6 +303,12 @@ namespace eWayCRM.API
         /// </exception>
         public JObject UploadFile(Stream stream, Guid itemGuid, string fileName)
         {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (string.IsNullOrEmpty(fileName))
+                throw new ArgumentNullException(nameof(fileName));
+
             return this.UploadFile(itemGuid, stream, fileName, true);
         }
         
