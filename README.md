@@ -58,10 +58,10 @@ The following code shows an example how to save document to eWay-CRM. The docume
 
 ```csharp
 var connection = new eWayCRM.API.Connection("https://server.mycompany.com/eway", "jsmith", "YOUR_PASSWORD_HASH");
-Connection.UploadFile(@"C:\Users\User\Documents\File.txt", out Guid Guid);
-Connection.CallMethod("SaveDocument", JObject.FromObject(new
+connection.UploadFile(@"C:\Users\User\Documents\File.txt", out Guid Guid);
+connection.CallMethod("SaveDocument", JObject.FromObject(new
 {
-	transmitObject = new
+    transmitObject = new
     {
         ItemGUID = Guid,
         FileAs = "File.txt",
@@ -70,3 +70,4 @@ Connection.CallMethod("SaveDocument", JObject.FromObject(new
         DocSize = documentSize
     }
 }));
+```
