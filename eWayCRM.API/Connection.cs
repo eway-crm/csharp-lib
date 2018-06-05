@@ -23,7 +23,7 @@ namespace eWayCRM.API
         private readonly string passwordHash;
         private readonly string appIdentifier;
         private readonly string clientMachineIdentifier;
-        private readonly string upploadMethodName = "SaveBinaryAttachment";
+        private const string upploadMethodName = "SaveBinaryAttachment";
 
         private Guid? sessionId;
 
@@ -202,16 +202,46 @@ namespace eWayCRM.API
                 throw new InvalidOperationException("Wcf returned nothing. That's strange.");
 
             JObject result = JObject.Parse(responseJson);
-
+            
             return result;
         }
 
+        /// <summary>
+        /// Calls method for uploading binary attachements against the eWay-CRM API.
+        /// </summary>
+        /// <param name="filePath">Path to the attachement to be uploaded (including the file). Is unnecessary if the method is supplied with stream and fileName. Ex. 'C:\Users\User\Documents\File.txt'</param>
+        /// <param name="itemGuid">The item unique identifier.  Will be generated for you.</param>
+        /// <param name="fileName">Name of the file to be uploaded. Is unnecessary if the method is supplied with filePath. Ex. 'File.txt'</param>
+        /// <returns>
+        /// JSON data returned by the API service.
+        /// </returns>
+        /// <exception cref="LoginException">
+        /// Logging into eWay-CRM was unsuccessful.
+        /// </exception>
+        /// <exception cref="ResponseException">
+        /// Method calling ended up badly.
+        /// </exception>
         public JObject UploadFile(string filePath, out Guid itemGuid, string fileName = null)
         {
             itemGuid = Guid.NewGuid();
             return this.UploadFile(filePath, itemGuid, fileName);
         }
 
+        /// <summary>
+        /// Calls method for uploading binary attachements against the eWay-CRM API.
+        /// </summary>
+        /// <param name="filePath">Path to the attachement to be uploaded (including the file). Is unnecessary if the method is supplied with stream and fileName. Ex. 'C:\Users\User\Documents\File.txt'</param>
+        /// <param name="itemGuid">Unique identifier  of attachement to be uploaded. Ex. 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'</param>
+        /// <param name="fileName">Name of the file to be uploaded. Is unnecessary if the method is supplied with filePath. Ex. 'File.txt'</param>
+        /// <returns>
+        /// JSON data returned by the API service.
+        /// </returns>
+        /// <exception cref="LoginException">
+        /// Logging into eWay-CRM was unsuccessful.
+        /// </exception>
+        /// <exception cref="ResponseException">
+        /// Method calling ended up badly.
+        /// </exception>
         public JObject UploadFile(string filePath, Guid itemGuid, string fileName = null)
         {
             if (string.IsNullOrEmpty(fileName))
@@ -219,21 +249,57 @@ namespace eWayCRM.API
 
             using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
-                return this.UploadFile(itemGuid, fileStream, fileName);
+                return this.UploadFile(fileStream, itemGuid, fileName);
             }
         }
 
-        public JObject UploadFile(out Guid itemGuid, Stream stream, string fileName)
+        /// <summary>
+        /// Calls method for uploading binary attachements against the eWay-CRM API.
+        /// </summary>
+        /// <param name="stream">Stream used for uploading the attachement. File stream will be used if not supplied.. Ex.:'FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read)'</param>
+        /// <param name="itemGuid">The item unique identifier.  Will be generated for you.</param>
+        /// <param name="fileName">Name of the file to be uploaded. Ex. 'File.txt'</param>
+        /// <returns>
+        /// JSON data returned by the API service.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// Stream must be able to read! - stream
+        /// </exception>
+        /// <exception cref="LoginException">
+        /// Logging into eWay-CRM was unsuccessful.
+        /// </exception>
+        /// <exception cref="ResponseException">
+        /// Method calling ended up badly.
+        /// </exception>
+        public JObject UploadFile(Stream stream, out Guid itemGuid, string fileName)
         {
             itemGuid = Guid.NewGuid();
-            return this.UploadFile(itemGuid, stream, fileName);
+            return this.UploadFile(stream, itemGuid, fileName);
         }
 
-        public JObject UploadFile(Guid itemGuid, Stream stream, string fileName)
+        /// <summary>
+        /// Calls method for uploading binary attachements against the eWay-CRM API.
+        /// </summary>
+        /// <param name="stream">Stream used for uploading the attachement. File stream will be used if not supplied.. Ex.:'FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read)'</param>
+        /// <param name="itemGuid">Unique identifier  of attachement to be uploaded. Ex. 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'</param>
+        /// <param name="fileName">Name of the file to be uploaded. Ex. 'File.txt'</param>
+        /// <returns>
+        /// JSON data returned by the API service.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// Stream must be able to read! - stream
+        /// </exception>
+        /// <exception cref="LoginException">
+        /// Logging into eWay-CRM was unsuccessful.
+        /// </exception>
+        /// <exception cref="ResponseException">
+        /// Method calling ended up badly.
+        /// </exception>
+        public JObject UploadFile(Stream stream, Guid itemGuid, string fileName)
         {
             return this.UploadFile(itemGuid, stream, fileName, true);
         }
-
+        
         private JObject UploadFile(Guid itemGuid, Stream stream, string fileName, bool repeatSession)
         {
             this.EnsureLogin();
