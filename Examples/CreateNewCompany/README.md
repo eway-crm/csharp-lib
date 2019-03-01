@@ -4,16 +4,16 @@ Here you can see the process of saving new company. It is done by using method `
 
 //Create the company		
 wcfConnection.CallMethod("SaveCompany", JObject.FromObject(new
-                    {
-                        transmitObject = new
-                        {
-                            'FileAs' => 'Company', 
-							'CompanyName' => 'Company',
-							'Purchaser' => '1',
-							'Phone' => '111 222 333',
-							'Email' => 'Email@company.com'
-                        }
-                    }));
+{
+	transmitObject = new
+	{
+		FileAs = "Company",
+		CompanyName = "Company",
+		Purchaser = "1",
+		Phone = "111 222 333",
+		Email = "Email@company.com"
+	}
+}));
 
 ```
 
