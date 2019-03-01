@@ -1,7 +1,7 @@
 # Editing existing company
 This sample shows how to edit existing company.
 
-![company before](https://github.com/rstefko/eway-crm-csharp-lib/raw/master/Examples/EditExistingCompany/Images/company_before.PNG)
+![company before](Images/company_before.PNG)
 
 Here you can see the process of editing company. It is done by using method  `wcfConnection.CallMethod()`  with name of API function as first parameter and json object with Company specifications as second parameter
 ```c#
@@ -24,8 +24,8 @@ wcfConnection.CallMethod("SaveCompany", JObject.FromObject(new
 
 This is what it should look like after the edit:
 
-![company after](https://github.com/rstefko/eway-crm-csharp-lib/raw/master/Examples/EditExistingCompany/Images/company_after.PNG)
+![company after](Images/company_after.PNG)
 
 ## Sample code
 
-To see the whole sample code click  [here](Program.cs)
+To see the whole sample code click [here](Program.cs)

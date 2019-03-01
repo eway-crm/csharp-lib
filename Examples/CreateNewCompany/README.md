@@ -32,4 +32,4 @@ object(stdClass)[2]
 As you can see, the service returns among other things a GUID of created item. You can use it for  [editing](https://github.com/rstefko/eway-crm-csharp-lib/tree/master/Examples/EditExistingCompany)  or creating relations to this item.
 
 ## Sample code
-To see the whole sample code click  [here](https://github.com/rstefko/eway-crm-csharp-lib/blob/master/Examples/CreateNewCompany/Program.cs)
+To see the whole sample code click  [here](Program.cs)
