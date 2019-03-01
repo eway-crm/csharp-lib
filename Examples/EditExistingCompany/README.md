@@ -28,4 +28,4 @@ This is what it should look like after the edit:
 
 ## Sample code
 
-To see the whole sample code click  [here](https://github.com/rstefko/eway-crm-csharp-lib/blob/master/Examples/EditExistingCompany/sample_code.php)
+To see the whole sample code click  [here](Program.cs)
