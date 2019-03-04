@@ -1,6 +1,7 @@
 # Delete Company
 
 ![example output](Images/sample_output_before.PNG)
+
 This sample shows deletion of company. It is done by using function `wcfConnection.CallMethod()` with name of the method as first parameter and jObject  with GUID of the Company to be deleted as second..
 ```c#
 
@@ -17,4 +18,4 @@ We can now check that if we look for the company now, eWay-CRM will not find any
 ![example output](Images/sample_output_after.PNG)
 ## Sample code
 
-To see the whole sample code click  [here](sample_code.php)
+To see the whole sample code click  [here](Program.cs)
