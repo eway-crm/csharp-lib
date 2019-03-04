@@ -6,7 +6,7 @@ This sample shows how to edit existing company.
 Here you can see the process of editing company. It is done by using method  `wcfConnection.CallMethod()`  with name of API function as first parameter and json object with Company specifications as second parameter
 ```c#
 
-//Edit the company		
+// Edit the company		
 wcfConnection.CallMethod("SaveCompany", JObject.FromObject(new
 {
     transmitObject = new

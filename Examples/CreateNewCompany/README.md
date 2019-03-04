@@ -2,7 +2,7 @@
 Here you can see the process of saving new company. It is done by using method ```wcfConnection.CallMethod()``` with name of API function as first parameter and json object with Company specifications as second parameter
 ```c#
 
-//Create the company		
+// Create the company		
 wcfConnection.CallMethod("SaveCompany", JObject.FromObject(new
 {
 	transmitObject = new

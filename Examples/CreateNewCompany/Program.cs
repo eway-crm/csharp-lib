@@ -14,7 +14,7 @@ namespace ExamplesTesting.CreateNewCompany
     {
         public static void Main(string[] args)
         {
-            //Connection to API
+            // Connection to API
             Connection wcfConnection = new Connection(
                     "https://trial.eway-crm.com/31994",
                     "api",
@@ -23,7 +23,7 @@ namespace ExamplesTesting.CreateNewCompany
                     );
 
 
-            //Create the company		
+            // Create the company		
             wcfConnection.CallMethod("SaveCompany", JObject.FromObject(new
             {
                 transmitObject = new
