@@ -1,73 +1,61 @@
-![eWay-CRM - The best CRM for Microsoft Outlook](eway-crm-logo.svg)
-
-# eWay-CRM API C# Library
-
-This small library helps you using the [eWay-CRM API](https://kb.eway-crm.com/documentation/6-add-ins/6-7-api-1). It is a wrapper over HTTP/S communication and sessions.
+![eWay-CRM Logo](https://www.eway-crm.com/wp-content/themes/eway/img/email/logo_grey.png)
+# eWay-CRM API
+API used for communication with [eWay-CRM](http://www.eway-crm.com/) web service. It is a wrapper over HTTP/S communication and sessions. See our [documentation](https://kb.eway-crm.com/documentation/6-add-ins/6-7-api-1) for more information. 
 
 ## Installation
+The simpliest way to start using this library is to get the  [NuGet Package](https://www.nuget.org/packages/eWayCRM.API). To do that, just run this command in your Package Manager Console (Visual Studio: Tools -> NuGet Package Manager -> Package Manager Console):
 
-### NuGet
-
-The simpliest way to start using this library is to get the [NuGet Package](https://www.nuget.org/packages/eWayCRM.API). To do that, just run this command in your Package Manager Console (Visual Studio: Tools -> NuGet Package Manager -> Package Manager Console):
 ```
 PM> Install-Package eWayCRM.API
 ```
 
 ## Usage
 
-This library wraps the communication with JSON API. To provide the most variability, it lets you to input JSON data and fetch JSON data. For JSON representation, we have chosen the [NewtonSoft.Json/Json.NET](https://www.newtonsoft.com/json) library. As a consequence, be sure to have `using Newtonsoft.Json.Linq;` everywhere you need to work with our library.
+This library wraps the communication with JSON API. To provide the most variability, it lets you to input JSON data and fetch JSON data. For JSON representation, we have chosen the  [NewtonSoft.Json/Json.NET](https://www.newtonsoft.com/json)  library. As a consequence, be sure to have  `using Newtonsoft.Json.Linq;`  everywhere you need to work with our library.
 
-The actual usage is then the same as it would be for example with [PHP](https://github.com/rstefko/eway-crm-php-lib). See the [documentation](https://kb.eway-crm.com/documentation/6-add-ins/6-7-api-1) for more.
+The actual usage is then the same as it would be for example with  [PHP](https://github.com/rstefko/eway-crm-php-lib). See the  [documentation](https://kb.eway-crm.com/documentation/6-add-ins/6-7-api-1)  for more.
 
-### Load and Store Items
+## Establishing connection
+To communicate eWay-CRM web service, we first have to establish connection. This must be done prior to every action we want to accomplish with use of the web service. To do that, we have to  create new instance of ```eWayConnector()``` with four parameters: service url address (same as the one you use in outlook), username, password and application identifier.
+```C#
 
-The following code shows an example how to load some data from eWay-CRM and then save a journal entry. It searches for a company named 'Contoso Ltd.' and if it finds it, creates a journal record connected to the found company.
+Connection wcfConnection = new Connection(
+	"https://trial.eway-crm.com/31994",
+	"api",
+	"ApiTrial@eWay-CRM",
+	"ExampleApplication100"
+	);
 
-```csharp
-var connection = new eWayCRM.API.Connection("https://server.mycompany.com/eway", "jsmith", "YOUR_PASSWORD_HASH");
-var searchedCompaniesResopnse = connection.CallMethod("SearchCompanies", JObject.FromObject(new
-{
-    transmitObject = new
-    {
-        FileAs = "Contoso Ltd."
-    }
-}));
-if (((JArray)searchedCompaniesResopnse["Data"]).Count != 0)
-{
-    connection.CallMethod("SaveJournal", JObject.FromObject(new
-    {
-        transmitObject = new
-        {
-            Companies_CompanyGuid = ((JArray)searchedCompaniesResopnse["Data"]).First.Value<string>("ItemGUID"),
-            FileAs = "I've found the company via the API!",
-            Note = "Using the eWay-CRM API C# Library",
-            EventStart = DateTime.Now.ToString("u"),
-            EventEnd = DateTime.Now.ToString("u")
-        }
-    }));
-}
 ```
 
-The code above will result like this:
+## Actions at the service
 
-![Contoso company with a new journal record](example-contoso-journal.png)
+You can check actions available on your service on  `[service adress]/WcfService/Service.svc/help`  . We have put together a list of examples for some basic actions you can use the service for, so don't be shy an try it out.
 
-### Creating Documents
+### [Create new company](Examples/CreateNewCompany/README.md)<br />
+Example showcasing creation of new Company.<br />
+Sample code [here](Examples/CreateNewCompany/Program.cs).
 
-The following code shows an example how to save document to eWay-CRM. The document is first uploaded as binary data and then saved in eWay-CRM.
+### [Edit existing company](Examples/EditExistingCompany/README.md)<br />
+Example showcasing editing existing Company.<br />
+Sample code [here](Examples/EditExistingCompany/Program.cs).
 
-```csharp
-var connection = new eWayCRM.API.Connection("https://server.mycompany.com/eway", "jsmith", "YOUR_PASSWORD_HASH");
-connection.UploadFile(@"C:\Users\User\Documents\File.txt", out Guid Guid);
-connection.CallMethod("SaveDocument", JObject.FromObject(new
-{
-    transmitObject = new
-    {
-        ItemGUID = Guid,
-        FileAs = "File.txt",
-        DocName = "File",
-        Extension = "txt",
-        DocSize = documentSize
-    }
-}));
-```
+### [List all companies](Examples/ListAllCompanies/README.md)<br />
+Example showcasing listing of all existing Companies.<br />
+Sample code [here](Examples/ListAllCompanies/Program.cs).
+
+### [Search for company](Examples/SearchForCompany/README.md)<br />
+Example showcasing serching for Company by parameters.<br />
+Sample code [here](Examples/SearchForCompany/Program.cs).
+
+### [Delete company](Examples/DeleteCompany/README.md)<br />
+Example showcasing deletion Company.<br />
+Sample code [here](Examples/DeleteCompany/Program.cs).
+
+### [Link existing item](Examples/LinkExistingItem/README.md)<br />
+Example showcasing creation of simple relation.<br />
+Sample code [here](Examples/LinkExistingItem/Program.cs).
+
+### [Link existing item](Examples/CreateDocument/README.md)<br />
+Example showcasing creation of document.<br />
+Sample code [here](Examples/CreateDocument/Program.cs).
