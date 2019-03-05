@@ -59,3 +59,6 @@ Sample code [here](Examples/LinkExistingItem/Program.cs).
 ### [Create document](Examples/CreateDocument/README.md)<br />
 Example showcasing creation of document.<br />
 Sample code [here](Examples/CreateDocument/Program.cs).
+
+## Folder name
+To ease understanding folder names, look [here](FolderNames.md).
