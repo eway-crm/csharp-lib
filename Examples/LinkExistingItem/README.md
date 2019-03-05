@@ -37,4 +37,4 @@ To see the whole sample code click  [here](Program.cs)
 
 ## Folder name
 
-To ease understanding folder names, look  [here](../../blob/master/FolderNames.md).
+To ease understanding folder names, look  [here](../../FolderNames.md).
