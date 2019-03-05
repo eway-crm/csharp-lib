@@ -44,9 +44,9 @@ Sample code [here](Examples/EditExistingCompany/Program.cs).
 Example showcasing listing of all existing Companies.<br />
 Sample code [here](Examples/ListAllCompanies/Program.cs).
 
-### [Search for company](Examples/SearchForCompany/README.md)<br />
+### [Search for company](Examples/SearchCompany/README.md)<br />
 Example showcasing serching for Company by parameters.<br />
-Sample code [here](Examples/SearchForCompany/Program.cs).
+Sample code [here](Examples/SearchCompany/Program.cs).
 
 ### [Delete company](Examples/DeleteCompany/README.md)<br />
 Example showcasing deletion Company.<br />
@@ -56,6 +56,6 @@ Sample code [here](Examples/DeleteCompany/Program.cs).
 Example showcasing creation of simple relation.<br />
 Sample code [here](Examples/LinkExistingItem/Program.cs).
 
-### [Link existing item](Examples/CreateDocument/README.md)<br />
+### [Create document](Examples/CreateDocument/README.md)<br />
 Example showcasing creation of document.<br />
 Sample code [here](Examples/CreateDocument/Program.cs).
