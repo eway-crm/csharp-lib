@@ -94,6 +94,32 @@ namespace eWayCRM.API
         /// <summary>
         /// Calls the given method against the eWay-CRM API.
         /// </summary>
+        /// <param name="methodName">Name of the method. Ex. 'GetCompanies'</param>
+        /// <returns>
+        /// JSON data returned by the API service.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// The method name was not supplied. - methodName
+        /// or
+        /// data - The parameter JSON data were not supplied. Supply at least an empty JSON object.
+        /// </exception>
+        /// <exception cref="LoginException">
+        /// Logging into eWay-CRM was unsuccessful.
+        /// </exception>
+        /// <exception cref="ResponseException">
+        /// Method calling ended up badly.
+        /// </exception>
+        public JObject CallMethod(string methodName)
+        {
+            if (string.IsNullOrEmpty(methodName))
+                throw new ArgumentNullException("The method name was not supplied.", nameof(methodName));
+
+            return this.CallMethod(methodName, JObject.FromObject(new { }));
+        }
+
+        /// <summary>
+        /// Calls the given method against the eWay-CRM API.
+        /// </summary>
         /// <param name="methodName">Name of the method. Ex. 'SaveCompany'</param>
         /// <param name="data">The JSON parameters posted to the method. Posting sessionId is not necessary. Ex.:
         /// {
@@ -379,32 +405,39 @@ namespace eWayCRM.API
 
         private static string GetClientIdentification(string uriString)
         {
-            Uri uri = new Uri(uriString);
-            return GetClientIdentification(uri.DnsSafeHost, uri.Port);
-        }
+            if (string.IsNullOrEmpty(uriString))
+                throw new ArgumentNullException(nameof(uriString));
 
-        private static string GetClientIdentification(string hostName, int port)
-        {
-            if (string.IsNullOrEmpty(hostName))
-                throw new ArgumentNullException(nameof(hostName));
+            var request = (HttpWebRequest)WebRequest.Create(uriString);
+            var localAddress = GetLocalAddress(request.ServicePoint.Address.DnsSafeHost, request.ServicePoint.Address.Port);
+            if (localAddress == null)
+                return Environment.MachineName;
 
-
-            TcpClient tcpClient = new TcpClient(hostName, port);
-            IPAddress localAddress = ((IPEndPoint)tcpClient.Client.LocalEndPoint).Address;
-
-            NetworkInterface networkInterface = NetworkInterface.GetAllNetworkInterfaces()
+            var networkInterface = NetworkInterface.GetAllNetworkInterfaces()
                 .Where(n => n.GetIPProperties().UnicastAddresses.Any(x => x.Address.Equals(localAddress)))
                 .FirstOrDefault();
 
             if (networkInterface == null)
-                return Environment.MachineName;
+                return localAddress.ToString();
 
-            byte[] addressBytes = networkInterface.GetPhysicalAddress().GetAddressBytes();
+            string physicalAddress = string.Join(":", networkInterface.GetPhysicalAddress().GetAddressBytes().Select(b => b.ToString("X2")));
+            if (string.IsNullOrEmpty(physicalAddress))
+                return localAddress.ToString();
 
-            if (addressBytes == null || addressBytes.Length == 0)
-                return Environment.MachineName;
+            return physicalAddress;
+        }
 
-            return string.Join(":", networkInterface.GetPhysicalAddress().GetAddressBytes().Select(b => b.ToString("X2")));
+        private static IPAddress GetLocalAddress(string hostName, int port)
+        {
+            try
+            {
+                TcpClient tcpClient = new TcpClient(hostName, port);
+                return ((IPEndPoint)tcpClient.Client.LocalEndPoint).Address;
+            }
+            catch (SocketException)
+            {
+                return null;
+            }
         }
     }
 }
