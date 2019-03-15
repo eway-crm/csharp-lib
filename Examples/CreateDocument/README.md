@@ -3,12 +3,12 @@ The following code shows an example how to save document to eWay-CRM. The docume
 ```c#
 
 // Create Document
-wcfConnection.UploadFile(@"C:\Users\user\Documents\File.txt", out Guid Guid);
+wcfConnection.UploadFile(@"C:\Users\user\Documents\File.txt", out Guid guid);
 wcfConnection.CallMethod("SaveDocument", JObject.FromObject(new
 {
     transmitObject = new
     {
-        ItemGUID = Guid,
+        ItemGUID = guid,
         FileAs = "File.txt",
         DocName = "File",
         Extension = "txt",
