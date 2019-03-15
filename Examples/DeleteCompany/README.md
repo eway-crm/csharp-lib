@@ -2,7 +2,7 @@
 
 ![example output](Images/sample_output_before.PNG)
 
-This sample shows deletion of company. It is done by using function `wcfConnection.CallMethod()` with name of the method as first parameter and jObject  with GUID of the Company to be deleted as second..
+This sample shows deletion of company. It is done by using function `wcfConnection.CallMethod()` with name of the method as first parameter and JObject  with GUID of the Company to be deleted as second.
 ```c#
 
 // List all companies
