@@ -22,14 +22,20 @@ namespace ExamplesTesting.SearchForCompany
                 "TestingConnector01"
                 );
 
-            // List all companies
-            Console.WriteLine(wcfConnection.CallMethod("SearchCompanies", JObject.FromObject(new
+            // Search Companies
+            JObject response = wcfConnection.CallMethod("SearchCompanies", JObject.FromObject(new
             {
                 transmitObject = new
                 {
-                    FileAs = "Dorl & Son Inc"
+                    FileAs = "01"
                 }
-            })).ToString());
+            }));
+
+            Console.WriteLine("| {0,-35} | {1,-35} | {2,-35} |", "Name", "Address", "Phone");
+            foreach (var item in ((JArray)response.GetValue("Data")))
+            {
+                Console.WriteLine("| {0,-35} | {1,-35} | {2,-35} |", item.Value<string>("FileAs"), item.Value<string>("Address1City")+" "+item.Value<string>("Address1Street") + " "+ item.Value<string>("Address1PostalCode"), item.Value<string>("Phone"));
+            }
         }
     }
 }

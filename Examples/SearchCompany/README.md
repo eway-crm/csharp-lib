@@ -1,16 +1,16 @@
 # Search Company
 
-This example should show you how to search for company based on one or more parameters.. It is done by using function `wcfConnection.CallMethod()` with name of the method as first parameter and jObject with parameters of the search as second..
+This example should show you how to search for company based on one or more parameters.. It is done by using function `wcfConnection.CallMethod()` with name of the method as first parameter and JObject with parameters of the search as second.
 ```c#
 
-// List all companies
-Console.WriteLine(wcfConnection.CallMethod("SearchCompanies", JObject.FromObject(new
+// Search Companies
+JObject response = wcfConnection.CallMethod("SearchCompanies", JObject.FromObject(new
 {
-    transmitObject = new
-    {
-        FileAs = "Dorl & Son Inc"
-    }
-})).ToString());
+	transmitObject = new
+	{
+		FileAs = "01"
+	}
+}));
 
 ```
 
