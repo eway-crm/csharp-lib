@@ -23,8 +23,14 @@ namespace ExamplesTesting.ListAllCompanies
                 );
 
             // List all companies
-            Console.WriteLine(wcfConnection.CallMethod("GetCompanies", new JObject()).ToString());
-            Console.ReadKey();
+            JObject response = wcfConnection.CallMethod("GetCompanies", new JObject());
+
+			// Output table
+            Console.WriteLine("| {0,-35} | {1,-35} | {2,-35} |", "Name", "Address", "Phone");
+            foreach (var item in ((JArray)response.GetValue("Data")))
+            {
+                Console.WriteLine("| {0,-35} | {1,-35} | {2,-35} |", item.Value<string>("FileAs"), item.Value<string>("Address1City") + " " + item.Value<string>("Address1Street") + " " + item.Value<string>("Address1PostalCode"), item.Value<string>("Phone"));
+            }
         }
     }
 }
