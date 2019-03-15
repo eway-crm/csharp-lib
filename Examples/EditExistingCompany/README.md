@@ -16,7 +16,7 @@ wcfConnection.CallMethod("SaveCompany", JObject.FromObject(new
         CompanyName = "Company",
         Purchaser = "1",
         Phone = "202202202",
-        Email = "randomCompanyEmail@company.cz"
+        Email = "randomCompanyEmail@company.com"
     }
 }));
 
