@@ -16,7 +16,7 @@ This library wraps the communication with JSON API. To provide the most variabil
 The actual usage is then the same as it would be for example with  [PHP](https://github.com/rstefko/eway-crm-php-lib). See the  [documentation](https://kb.eway-crm.com/documentation/6-add-ins/6-7-api-1)  for more.
 
 ## Establishing connection
-To communicate eWay-CRM web service, we first have to establish connection. This must be done prior to every action we want to accomplish with use of the web service. To do that, we have to  create new instance of ```eWayConnector()``` with four parameters: service url address (same as the one you use in outlook), username, password and application identifier.
+To communicate eWay-CRM web service, we first have to establish connection. This must be done prior to every action we want to accomplish with use of the web service. To do that, we have to  create new instance of ```Connection()``` with four parameters: service url address (same as the one you use in outlook), username, password and application identifier. Identifier is bound to application and its version. It must contain number at its end.
 ```C#
 
 Connection wcfConnection = new Connection(
