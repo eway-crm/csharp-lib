@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using eWayCRM.API.Exceptions;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography;
 
 namespace eWayCRM.API
 {
@@ -24,6 +25,7 @@ namespace eWayCRM.API
         private readonly string appIdentifier;
         private readonly string clientMachineIdentifier;
         private const string upploadMethodName = "SaveBinaryAttachment";
+        private static readonly MD5 _md5Hash = MD5.Create();
 
         private Guid? sessionId;
 
@@ -438,6 +440,27 @@ namespace eWayCRM.API
             {
                 return null;
             }
+        }
+
+
+        /// <summary>
+        /// Is used to hash password, in case you dont have it already available, or dont have any other means to hash it..
+        /// </summary>
+        /// <param name="input">Password to be hashed.</param>
+        /// <returns>Pasword in MD5 hash.</returns>
+        public static string HashPassword(string input)
+        {
+
+            byte[] data = _md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            StringBuilder sBuilder = new StringBuilder();
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            return sBuilder.ToString();
         }
     }
 }
