@@ -18,7 +18,7 @@ namespace ExamplesTesting.CreateNewCompany
             Connection wcfConnection = new Connection(
                     "https://trial.eway-crm.com/31994",
                     "api",
-                    "470AE7216203E23E1983EF1851E72947",
+                    Connection.HashPassword("ApiTrial@eWay-CRM"),
                     "TestingConnector01"
                     );
 

@@ -22,7 +22,7 @@ To communicate eWay-CRM web service, we first have to establish connection. This
 Connection wcfConnection = new Connection(
 	"https://trial.eway-crm.com/31994",
 	"api",
-	"ApiTrial@eWay-CRM",
+	Connection.HashPassword("ApiTrial@eWay-CRM"),
 	"ExampleApplication100"
 	);
 
