@@ -444,22 +444,18 @@ namespace eWayCRM.API
 
 
         /// <summary>
-        /// Is used to hash password, in case you dont have it already available, or dont have any other means to hash it..
+        /// Use this method to hash the eWay-CRM password in case you don't have it already available encrypted or hashed.
         /// </summary>
         /// <param name="input">Password to be hashed.</param>
-        /// <returns>Pasword in MD5 hash.</returns>
+        /// <returns>Hash for usage in <see cref="Connection"/> constructor.</returns>
         public static string HashPassword(string input)
         {
-
             byte[] data = _md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
-
             StringBuilder sBuilder = new StringBuilder();
-
             for (int i = 0; i < data.Length; i++)
             {
                 sBuilder.Append(data[i].ToString("x2"));
             }
-
             return sBuilder.ToString();
         }
     }
