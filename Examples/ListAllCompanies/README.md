@@ -1,9 +1,9 @@
 # List all Companies
-This sample shows how to list all existing companies. It is done by using function `wcfConnection.CallMethod()` with name of the method as first parameter and empty JObject as second due to this method not needing any other parameters.
+This sample shows how to list all existing companies. It is done by using function `wcfConnection.CallMethod()` with name of the method as parameter.
 ```c#
 
 // List all companies
-JObject response = wcfConnection.CallMethod("GetCompanies", new JObject());
+JObject response = wcfConnection.CallMethod("GetCompanies");
 
 ```
 
