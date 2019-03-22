@@ -1,8 +1,8 @@
-# Link to existing Item
+# Link to Existing Item
 
 This example shows how to create link from one existing item to another. In other words, basic relation.
 
-First we create array of relation criteria. We need to know GUIDs of two items we want to link an their respective [foldernames](../../FolderNames.md). The word GENERAL in relation type means, that this will be basic relation, simple link between two items .
+First we create array of relation criteria. We need to know GUIDs of two items we want to link an their respective [folder names](../../FolderNames.md). The word GENERAL in relation type means, that this will be basic relation, simple link between two items.
 ```c#
 
 // Save Relation
@@ -10,11 +10,11 @@ wcfConnection.CallMethod("SaveRelation", JObject.FromObject(new
 {
     transmitObject = new
     {
-        ItemGUID1     = "129641b8-3677-11e7-9e49-080027cbca76",
-        ItemGUID2     = "d9705ddc-9161-44e3-82cd-0bd0063b66f5",
-        FolderName1   = "Projects",
-        FolderName2   = "Contacts",
-        RelationType  = "GENERAL"
+        ItemGUID1 = "129641b8-3677-11e7-9e49-080027cbca76",
+        ItemGUID2 = "d9705ddc-9161-44e3-82cd-0bd0063b66f5",
+        FolderName1 = "Projects",
+        FolderName2 = "Contacts",
+        RelationType = "GENERAL"
     }
 }));
 

@@ -1,5 +1,5 @@
 # Saving new Company
-Here you can see the process of saving new company. It is done by using method ```wcfConnection.CallMethod()``` with name of API function as first parameter and json object with Company specifications as second parameter
+Here you can see the process of saving new company. It is done by using method ```wcfConnection.CallMethod()``` with name of API function as first parameter and json object with Company specifications as second parameter.
 ```c#
 
 // Create the company		
@@ -18,7 +18,7 @@ wcfConnection.CallMethod("SaveCompany", JObject.FromObject(new
 ```
 
 ### Output
-Result of this code should be visible in eWay-CRM as a new company. If you wanted to see raw data of what the service returns, add output to console around the function and follow it up with its  `.ToString()`  . The output should look something like this :
+Result of this code should be visible in eWay-CRM as a new company. If you wanted to see raw data of what the service returns, add output to console around the function and follow it up with its  `.ToString()`  . The output should look something like this:
 ```console
 
 {

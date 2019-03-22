@@ -3,7 +3,7 @@ This sample shows how to edit existing company.
 
 ![company before](Images/company_before.PNG)
 
-Here you can see the process of editing company. It is done by using method  `wcfConnection.CallMethod()`  with name of API function as first parameter and json object with Company specifications as second parameter
+Here you can see the process of editing company. It is done by using method  `wcfConnection.CallMethod()`  with name of API function as first parameter and json object with Company specifications as second parameter.
 ```c#
 
 // Edit the company		
