@@ -27,7 +27,7 @@ namespace ExamplesTesting.SearchForCompany
             {
                 transmitObject = new
                 {
-                    FileAs = "01"
+                    FileAs = "Dorl & Son Inc"
                 }
             }));
 

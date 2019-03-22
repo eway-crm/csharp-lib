@@ -8,7 +8,7 @@ JObject response = wcfConnection.CallMethod("SearchCompanies", JObject.FromObjec
 {
 	transmitObject = new
 	{
-		FileAs = "01"
+		FileAs = "Dorl & Son Inc"
 	}
 }));
 
