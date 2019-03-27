@@ -25,7 +25,7 @@ namespace ExamplesTesting.ListAllCompanies
             // List all companies
             JObject response = wcfConnection.CallMethod("GetCompanies");
 
-			// Output table
+            // Output table
             Console.WriteLine("| {0,-35} | {1,-35} | {2,-35} |", "Name", "Address", "Phone");
             foreach (var item in ((JArray)response.GetValue("Data")))
             {
