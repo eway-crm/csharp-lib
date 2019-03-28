@@ -340,6 +340,22 @@ namespace eWayCRM.API
             return this.UploadFile(itemGuid, stream, fileName, true);
         }
         
+        /// <summary>
+        /// Use this method to hash the eWay-CRM password in case you don't have it already available encrypted or hashed.
+        /// </summary>
+        /// <param name="input">Password to be hashed.</param>
+        /// <returns>Hash for usage in <see cref="Connection"/> constructor.</returns>
+        public static string HashPassword(string input)
+        {
+            byte[] data = _md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
+        }
+
         private JObject UploadFile(Guid itemGuid, Stream stream, string fileName, bool repeatSession)
         {
             this.EnsureLogin();
@@ -440,23 +456,6 @@ namespace eWayCRM.API
             {
                 return null;
             }
-        }
-
-
-        /// <summary>
-        /// Use this method to hash the eWay-CRM password in case you don't have it already available encrypted or hashed.
-        /// </summary>
-        /// <param name="input">Password to be hashed.</param>
-        /// <returns>Hash for usage in <see cref="Connection"/> constructor.</returns>
-        public static string HashPassword(string input)
-        {
-            byte[] data = _md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
-            StringBuilder sBuilder = new StringBuilder();
-            for (int i = 0; i < data.Length; i++)
-            {
-                sBuilder.Append(data[i].ToString("x2"));
-            }
-            return sBuilder.ToString();
         }
     }
 }

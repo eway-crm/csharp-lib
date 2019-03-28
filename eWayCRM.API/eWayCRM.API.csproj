@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\eWayCRM.API.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -49,6 +50,7 @@
     <Compile Include="Exceptions\ClientMachineIdentifierDeterminationException.cs" />
     <Compile Include="Exceptions\LoginException.cs" />
     <Compile Include="Exceptions\ResponseException.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
