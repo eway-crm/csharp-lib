@@ -8,6 +8,7 @@
     <owners>$author$</owners>
     <licenseUrl>https://github.com/rstefko/eway-crm-csharp-lib/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/rstefko/eway-crm-csharp-lib</projectUrl>
+	<iconUrl>https://github.com/rstefko/eway-crm-csharp-lib/raw/master/logo_64.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright 2018</copyright>
