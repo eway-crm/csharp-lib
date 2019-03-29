@@ -356,6 +356,31 @@ namespace eWayCRM.API
             return sBuilder.ToString();
         }
 
+        /// <summary>
+        /// Calls Get[FolderName]ByItemGuids with chunking.
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="itemGuids">Identifiers of items.</param>
+        /// <param name="includeForeignKeys">If set to True, the JSON result will contain foreign keys/items fields made from the 1:N relations as well.</param>
+        /// <param name="includeRelations">If set to True, the JSON result will contain the relations as well.</param>
+        /// <returns></returns>
+        public JArray GetItemsByItemGuids(string methodName, IEnumerable<Guid> itemGuids, bool includeForeignKeys = false, bool includeRelations = false)
+        {
+            List<JToken> items = new List<JToken>(itemGuids.Count());
+
+            foreach (IEnumerable<Guid> itemsGroup in itemGuids.Select((item, index) => new { item, index }).GroupBy(x => x.index / 192, x => x.item))
+            {
+                items.AddRange(this.CallMethod(methodName, JObject.FromObject(new
+                {
+                    itemGuids = new JArray(itemsGroup),
+                    includeForeignKeys,
+                    includeRelations
+                }))["Data"]);
+            }
+
+            return new JArray(items);
+        }
+
         private JObject UploadFile(Guid itemGuid, Stream stream, string fileName, bool repeatSession)
         {
             this.EnsureLogin();
