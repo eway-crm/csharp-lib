@@ -24,10 +24,28 @@ namespace eWayCRM.API
         private readonly string passwordHash;
         private readonly string appIdentifier;
         private readonly string clientMachineIdentifier;
-        private const string upploadMethodName = "SaveBinaryAttachment";
+        private const string uploadMethodName = "SaveBinaryAttachment";
         private static readonly MD5 _md5Hash = MD5.Create();
 
         private Guid? sessionId;
+
+        /// <summary>
+        /// Gets the user Guid.
+        /// </summary>
+        public Guid UserGuid
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the API version.
+        /// </summary>
+        public Version Version
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Connection" /> class.
@@ -170,7 +188,10 @@ namespace eWayCRM.API
             return response;
         }
 
-        private void EnsureLogin()
+        /// <summary>
+        /// Forces LogIn method to be called if it was not called before.
+        /// </summary>
+        public void EnsureLogin()
         {
             if (this.sessionId == null)
             {
@@ -187,9 +208,13 @@ namespace eWayCRM.API
                 appVersion = this.appIdentifier,
                 clientMachineIdentifier = this.clientMachineIdentifier
             }));
+
             if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
                 throw new LoginException(response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
+
             this.sessionId = new Guid(response.Value<string>("SessionId"));
+            this.UserGuid = new Guid(response.Value<string>("UserItemGuid"));
+            this.Version = new Version(response.Value<string>("WcfVersion"));
         }
 
         private JObject Call(string methodName, JObject data)
@@ -391,7 +416,7 @@ namespace eWayCRM.API
                 return this.UploadFile(itemGuid, stream, fileName, false);
             }
             if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
-                throw new ResponseException(upploadMethodName, response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
+                throw new ResponseException(uploadMethodName, response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
             return response;
         }
 
@@ -443,7 +468,7 @@ namespace eWayCRM.API
 
         private string GetFileUploadUri(Guid itemGuid, string FileName)
         {
-            return ($"{this.serviceUri}/{upploadMethodName}?sessionId={this.sessionId}&itemGuid={itemGuid}&fileName={FileName}");
+            return ($"{this.serviceUri}/{uploadMethodName}?sessionId={this.sessionId}&itemGuid={itemGuid}&fileName={FileName}");
         }
 
         private static string GetClientIdentification(string uriString)

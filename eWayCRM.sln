@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eWayCRM.API", "eWayCRM.API\eWayCRM.API.csproj", "{940D3D9A-D0F9-4ACB-B189-BC6994C82E08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eWayCRM.API.UnitTests", "eWayCRM.API.UnitTests\eWayCRM.API.UnitTests.csproj", "{49DABC0C-2619-4BB9-B88A-6E4CCA6D338D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{940D3D9A-D0F9-4ACB-B189-BC6994C82E08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{940D3D9A-D0F9-4ACB-B189-BC6994C82E08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{940D3D9A-D0F9-4ACB-B189-BC6994C82E08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49DABC0C-2619-4BB9-B88A-6E4CCA6D338D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49DABC0C-2619-4BB9-B88A-6E4CCA6D338D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49DABC0C-2619-4BB9-B88A-6E4CCA6D338D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49DABC0C-2619-4BB9-B88A-6E4CCA6D338D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
