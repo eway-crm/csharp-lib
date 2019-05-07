@@ -6,9 +6,9 @@
     <title>eWay-CRM API Connector</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>https://github.com/rstefko/eway-crm-csharp-lib/blob/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/rstefko/eway-crm-csharp-lib</projectUrl>
-	<iconUrl>https://github.com/rstefko/eway-crm-csharp-lib/raw/master/logo_64.png</iconUrl>
+    <licenseUrl>https://github.com/eway-crm/csharp-lib/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/eway-crm/csharp-lib</projectUrl>
+	<iconUrl>https://raw.githubusercontent.com/eway-crm/csharp-lib/master/logo_64.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright 2018</copyright>
