@@ -8,14 +8,13 @@
     <owners>$author$</owners>
     <licenseUrl>https://github.com/eway-crm/csharp-lib/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/eway-crm/csharp-lib</projectUrl>
-	<iconUrl>https://raw.githubusercontent.com/eway-crm/csharp-lib/master/logo_64.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/eway-crm/csharp-lib/master/logo_64.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright 2018</copyright>
-	<releaseNotes>Added support for new API URL.
-Added support for AD authentication.</releaseNotes>
+    <releaseNotes>Added support for insecure API</releaseNotes>
     <tags>eWay CRM eWay-CRM API</tags>
-	  <dependencies>
+    <dependencies>
       <dependency id="Newtonsoft.Json" version="11.0.2" />
     </dependencies>
   </metadata>

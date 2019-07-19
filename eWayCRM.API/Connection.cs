@@ -126,7 +126,7 @@ namespace eWayCRM.API
 
         private string GetApiServiceUrl(string baseUri, bool useOldUrl = false)
         {
-            string path = useOldUrl ? "WcfService/Service.svc" : "API.svc";
+            string path = useOldUrl ? "WcfService/Service.svc" : (baseUri.StartsWith("http://") ? "InsecureAPI.svc" : "API.svc");
             UriBuilder builder = new UriBuilder(baseUri);
             if (builder.Path.EndsWith("/"))
             {
