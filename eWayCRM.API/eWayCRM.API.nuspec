@@ -12,6 +12,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright 2018</copyright>
+	<releaseNotes>Added support for new API URL.
+Added support for AD authentication.</releaseNotes>
     <tags>eWay CRM eWay-CRM API</tags>
 	  <dependencies>
       <dependency id="Newtonsoft.Json" version="11.0.2" />

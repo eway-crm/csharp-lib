@@ -257,15 +257,18 @@ namespace eWayCRM.API
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(this.GetMethodUri(methodName));
             webRequest.Method = WebRequestMethods.Http.Post;
             webRequest.UseDefaultCredentials = this.useDefaultCredentials;
-            webRequest.Credentials = this.networkCredential;
             webRequest.ContentType = "application/json";
+
+            if (!useDefaultCredentials)
             {
-                byte[] postBytes = Encoding.UTF8.GetBytes(data.ToString());
-                webRequest.ContentLength = postBytes.Length;
-                using (Stream dataStream = webRequest.GetRequestStream())
-                {
-                    dataStream.Write(postBytes, 0, postBytes.Length);
-                }
+                webRequest.Credentials = this.networkCredential;
+            }
+
+            byte[] postBytes = Encoding.UTF8.GetBytes(data.ToString());
+            webRequest.ContentLength = postBytes.Length;
+            using (Stream dataStream = webRequest.GetRequestStream())
+            {
+                dataStream.Write(postBytes, 0, postBytes.Length);
             }
 
             string responseJson = null;
