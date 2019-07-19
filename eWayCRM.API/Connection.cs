@@ -19,7 +19,9 @@ namespace eWayCRM.API
     /// </summary>
     public class Connection
     {
-        private readonly string serviceUri;
+        private readonly string baseServiceUri;
+        private string serviceUri;
+        private bool oldServiceUriUsed;
         private readonly string username;
         private readonly string passwordHash;
         private readonly string appIdentifier;
@@ -90,25 +92,36 @@ namespace eWayCRM.API
                     throw new ClientMachineIdentifierDeterminationException($"Unable to determine the client machine unique identifier automatically. Please supply it manually via the '{nameof(clientMachineIdentifier)}' argument.");
             }
 
-            if (!apiServiceUri.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))
+            if (apiServiceUri.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))
             {
-                UriBuilder builder = new UriBuilder(apiServiceUri);
-                if (builder.Path.EndsWith("/"))
-                {
-                    builder.Path = builder.Path + "WcfService/Service.svc";
-                }
-                else
-                {
-                    builder.Path = builder.Path + "/WcfService/Service.svc";
-                }
-                apiServiceUri = builder.ToString();
+                this.serviceUri = apiServiceUri;
+            }
+            else
+            {
+                this.serviceUri = this.GetApiServiceUrl(apiServiceUri);
+                this.baseServiceUri = apiServiceUri;
             }
 
-            this.serviceUri = apiServiceUri;
             this.username = username;
             this.passwordHash = passwordHash;
             this.appIdentifier = appIdentifier;
             this.clientMachineIdentifier = clientMachineIdentifier;
+        }
+
+        private string GetApiServiceUrl(string baseUri, bool useOldUrl = false)
+        {
+            string path = useOldUrl ? "WcfService/Service.svc" : "API.svc";
+            UriBuilder builder = new UriBuilder(baseUri);
+            if (builder.Path.EndsWith("/"))
+            {
+                builder.Path = builder.Path + path;
+            }
+            else
+            {
+                builder.Path = builder.Path + "/" + path;
+            }
+
+            return builder.ToString();
         }
 
         /// <summary>
@@ -238,19 +251,33 @@ namespace eWayCRM.API
             }
 
             string responseJson = null;
-            using (HttpWebResponse httpResponse = (HttpWebResponse)webRequest.GetResponse())
+            try
             {
-                using (Stream responseStream = httpResponse.GetResponseStream())
+                using (HttpWebResponse httpResponse = (HttpWebResponse)webRequest.GetResponse())
                 {
-                    if (responseStream != null)
+                    using (Stream responseStream = httpResponse.GetResponseStream())
                     {
-                        using (StreamReader streamReader = new StreamReader(responseStream))
+                        if (responseStream != null)
                         {
-                            responseJson = streamReader.ReadToEnd();
+                            using (StreamReader streamReader = new StreamReader(responseStream))
+                            {
+                                responseJson = streamReader.ReadToEnd();
+                            }
                         }
                     }
                 }
             }
+            catch (WebException ex)
+            {
+                if (!oldServiceUriUsed && ((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
+                {
+                    this.serviceUri = this.GetApiServiceUrl(this.baseServiceUri, true);
+                    this.oldServiceUriUsed = true;
+
+                    return this.Call(methodName, data);
+                }
+            }
+
             if (string.IsNullOrEmpty(responseJson))
                 throw new InvalidOperationException("Wcf returned nothing. That's strange.");
 
