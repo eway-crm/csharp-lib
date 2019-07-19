@@ -26,6 +26,7 @@ namespace eWayCRM.API
         private readonly string passwordHash;
         private readonly string appIdentifier;
         private readonly string clientMachineIdentifier;
+        private readonly bool useDefaultCredentials;
         private const string uploadMethodName = "SaveBinaryAttachment";
         private static readonly MD5 _md5Hash = MD5.Create();
 
@@ -54,9 +55,10 @@ namespace eWayCRM.API
         /// </summary>
         /// <param name="apiServiceUri">The API service URI. Ex. 'https://server.mycompany.com/eway' or 'https://server.local:4443/eWay/WcfService/Service.svc'</param>
         /// <param name="username">The eWay-CRM username. Ex. 'jsmith'.</param>
-        /// <param name="passwordHash">Password hash. Use the hash made with "SecurityApp" or HashPassword.exe. MD5 hashes are accepted as well (unless AD HTTP Authentication between WS and WCF is activated).</param>
+        /// <param name="passwordHash">Password hash. Use the hash made with HashPassword.exe. MD5 hashes are accepted as well (unless AD HTTP Authentication between WS and WCF is activated).</param>
         /// <param name="appIdentifier">The application identifier. Must contain at least two alphabetic characters on the beginning and at least one numeric character at the end.</param>
         /// <param name="clientMachineIdentifier">The unique identifier, of the client machine. Usually a MAC address is used. Optional. If you leave it null, MAC address is used.</param>
+        /// <param name="useDefaultCredentials">True to authenticate HTTP request using the default credentials of the currently logged on user.</param>
         /// <exception cref="ArgumentNullException">eWay-CRM API service uri was not supplied. - apiServiceUri
         /// or
         /// eWay-CRM username was not supplied. - username
@@ -65,7 +67,8 @@ namespace eWayCRM.API
         /// or
         /// The client app identifier was not supplied. - appIdentifier</exception>
         /// <exception cref="ArgumentException">The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API. - apiServiceUri</exception>
-        public Connection(string apiServiceUri, string username, string passwordHash, string appIdentifier = "eWayCRM.API.CSharpConnector10", string clientMachineIdentifier = null)
+        public Connection(string apiServiceUri, string username, string passwordHash, string appIdentifier = "eWayCRM.API.CSharpConnector10", string clientMachineIdentifier = null,
+            bool useDefaultCredentials = false)
         {
             if (string.IsNullOrEmpty(apiServiceUri))
                 throw new ArgumentNullException(nameof(apiServiceUri), "eWay-CRM API service uri was not supplied.");
@@ -73,7 +76,7 @@ namespace eWayCRM.API
             if (string.IsNullOrEmpty(username))
                 throw new ArgumentNullException(nameof(username), "eWay-CRM username was not supplied.");
 
-            if (string.IsNullOrEmpty(passwordHash))
+            if (string.IsNullOrEmpty(passwordHash) && !useDefaultCredentials)
                 throw new ArgumentNullException(nameof(passwordHash), "eWay-CRM password hash was not supplied.");
 
             if (string.IsNullOrEmpty(appIdentifier))
@@ -84,6 +87,9 @@ namespace eWayCRM.API
 
             if (!Regex.IsMatch(appIdentifier, "^[a-zA-Z][a-zA-Z].*\\d$"))
                 throw new ArgumentException("The client app identifier must contain at least one alphabetic character on the beginning and at least one numeric character at the end.", nameof(appIdentifier));
+
+            if (useDefaultCredentials && !apiServiceUri.StartsWith("https://"))
+                throw new ArgumentException("Secure communication (https) has to be used with useDefaultCredentials parameter", nameof(useDefaultCredentials));
 
             if (string.IsNullOrEmpty(clientMachineIdentifier))
             {
@@ -106,6 +112,7 @@ namespace eWayCRM.API
             this.passwordHash = passwordHash;
             this.appIdentifier = appIdentifier;
             this.clientMachineIdentifier = clientMachineIdentifier;
+            this.useDefaultCredentials = useDefaultCredentials;
         }
 
         private string GetApiServiceUrl(string baseUri, bool useOldUrl = false)
@@ -240,6 +247,7 @@ namespace eWayCRM.API
 
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(this.GetMethodUri(methodName));
             webRequest.Method = WebRequestMethods.Http.Post;
+            webRequest.UseDefaultCredentials = this.useDefaultCredentials;
             webRequest.ContentType = "application/json";
             {
                 byte[] postBytes = Encoding.UTF8.GetBytes(data.ToString());
