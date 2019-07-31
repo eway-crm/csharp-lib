@@ -60,5 +60,9 @@ Sample code [here](Examples/LinkExistingItem/Program.cs).
 Example showcasing creation of document.<br />
 Sample code [here](Examples/CreateDocument/Program.cs).
 
+### [Additional fields](Examples/AdditionalFields/README.md)<br />
+Example showcasing manipulation with additional fields.<br />
+Sample code [here](Examples/AdditionalFields/Program.cs).
+
 ## Folder name
 To ease understanding folder names, look [here](FolderNames.md).
