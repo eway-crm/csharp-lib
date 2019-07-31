@@ -35,7 +35,7 @@ As a result, you should see the newly created company with filled additional fie
 ![example output](Images/sample_output.PNG)
 
 ## Sample code
-To see the whole sample code click [here](sample_code.php).
+To see the whole sample code click [here](Program.cs).
 
 ## Folder name
 To ease understanding folder names, look [here](../../FolderNames.md).
