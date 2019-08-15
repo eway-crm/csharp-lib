@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using eWayCRM.API;
 
 
-namespace ExamplesTesting.CreateDocument
+namespace ExamplesTesting.AdditionalFields
 {
     class Program
     {
