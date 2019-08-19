@@ -44,9 +44,9 @@ Sample code [here](Examples/EditExistingCompany/Program.cs).
 Example showcasing listing of all existing Companies.<br />
 Sample code [here](Examples/ListAllCompanies/Program.cs).
 
-### [Search for company](Examples/SearchCompany/README.md)<br />
+### [Search for company](Examples/SearchForCompany/README.md)<br />
 Example showcasing serching for Company by parameters.<br />
-Sample code [here](Examples/SearchCompany/Program.cs).
+Sample code [here](Examples/SearchForCompany/Program.cs).
 
 ### [Delete company](Examples/DeleteCompany/README.md)<br />
 Example showcasing deletion of Company.<br />

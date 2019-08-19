@@ -28,7 +28,7 @@ namespace ExamplesTesting.LinkExistingItem
                 transmitObject = new
                 {
                     ItemGUID1 = "129641b8-3677-11e7-9e49-080027cbca76",
-                    ItemGUID2 = "d9705ddc-9161-44e3-82cd-0bd0063b66f5",
+                    ItemGUID2 = "0db3650f-bb87-4acc-96d6-9e6993cc6e61",
                     FolderName1 = "Projects",
                     FolderName2 = "Contacts",
                     RelationType = "GENERAL"

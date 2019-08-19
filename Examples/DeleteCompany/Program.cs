@@ -24,7 +24,7 @@ namespace ExamplesTesting.DeleteCompany
 
             // List all companies
             wcfConnection.CallMethod("DeleteCompany", JObject.FromObject(new {
-                    itemGuid = "E840934C-D505-4B35-B8D6-354CA0977E2B"
+                    itemGuid = "3135277c-e8b9-4279-95d2-4fe5d333df5a"
             }));
         }
     }

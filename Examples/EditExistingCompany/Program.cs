@@ -27,7 +27,7 @@ namespace ExamplesTesting.EitExistingCompany
             {
                 transmitObject = new
                 {
-                    ItemGUID = "ebdd18f3-92e9-412d-afec-e1aaf6139b09",
+                    ItemGUID = "bb32631e-8f81-4da5-a95d-52b49591c661",
                     FileAs = "Company",
                     CompanyName = "Company",
                     Purchaser = "1",
