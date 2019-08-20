@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{130F1654-603B-42D9-9DCA-75CEF0E40B19}</ProjectGuid>
+    <ProjectGuid>{4B07B0D7-4E06-43D9-8AC7-505E35BBEBEE}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>AdditionalFields</RootNamespace>
     <AssemblyName>AdditionalFields</AssemblyName>
@@ -50,9 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
