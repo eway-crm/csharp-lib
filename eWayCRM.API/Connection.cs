@@ -28,7 +28,8 @@ namespace eWayCRM.API
         private readonly string clientMachineIdentifier;
         private readonly bool useDefaultCredentials;
         private readonly NetworkCredential networkCredential;
-        private const string uploadMethodName = "SaveBinaryAttachment";
+        private const string _uploadMethodName = "SaveBinaryAttachment";
+        private const string _loginMethodName = "LogIn";
         private static readonly MD5 _md5Hash = MD5.Create();
 
         private Guid? sessionId;
@@ -230,7 +231,7 @@ namespace eWayCRM.API
 
         private void LogIn()
         {
-            JObject response = this.Call("LogIn", JObject.FromObject(new
+            JObject response = this.Call(_loginMethodName, JObject.FromObject(new
             {
                 userName = this.username,
                 passwordHash = this.passwordHash,
@@ -290,7 +291,7 @@ namespace eWayCRM.API
             }
             catch (WebException ex)
             {
-                if (!oldServiceUriUsed && ((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
+                if (!oldServiceUriUsed && ((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound && methodName == _loginMethodName && this.passwordHash != null)
                 {
                     this.serviceUri = this.GetApiServiceUrl(this.baseServiceUri, true);
                     this.oldServiceUriUsed = true;
@@ -466,7 +467,7 @@ namespace eWayCRM.API
                 return this.UploadFile(itemGuid, stream, fileName, false);
             }
             if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
-                throw new ResponseException(uploadMethodName, response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
+                throw new ResponseException(_uploadMethodName, response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
             return response;
         }
 
@@ -518,7 +519,7 @@ namespace eWayCRM.API
 
         private string GetFileUploadUri(Guid itemGuid, string FileName)
         {
-            return ($"{this.serviceUri}/{uploadMethodName}?sessionId={this.sessionId}&itemGuid={itemGuid}&fileName={FileName}");
+            return ($"{this.serviceUri}/{_uploadMethodName}?sessionId={this.sessionId}&itemGuid={itemGuid}&fileName={FileName}");
         }
 
         private static string GetClientIdentification(string uriString)
