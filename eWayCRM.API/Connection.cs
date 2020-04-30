@@ -249,6 +249,26 @@ namespace eWayCRM.API
 
         private JObject Call(string methodName, JObject data)
         {
+            string responseJson = null;
+
+            this.Call(methodName, data, (stream) =>
+            {
+                using (StreamReader streamReader = new StreamReader(stream))
+                {
+                    responseJson = streamReader.ReadToEnd();
+                }
+            });
+
+            if (string.IsNullOrEmpty(responseJson))
+                throw new InvalidOperationException("Wcf returned nothing. That's strange.");
+
+            JObject result = JObject.Parse(responseJson);
+
+            return result;
+        }
+
+        private void Call(string methodName, JObject data, Action<Stream> readStreamAction)
+        {
             if (string.IsNullOrEmpty(methodName))
                 throw new ArgumentNullException(nameof(methodName));
 
@@ -272,7 +292,6 @@ namespace eWayCRM.API
                 dataStream.Write(postBytes, 0, postBytes.Length);
             }
 
-            string responseJson = null;
             try
             {
                 using (HttpWebResponse httpResponse = (HttpWebResponse)webRequest.GetResponse())
@@ -281,10 +300,7 @@ namespace eWayCRM.API
                     {
                         if (responseStream != null)
                         {
-                            using (StreamReader streamReader = new StreamReader(responseStream))
-                            {
-                                responseJson = streamReader.ReadToEnd();
-                            }
+                            readStreamAction(responseStream);
                         }
                     }
                 }
@@ -296,18 +312,11 @@ namespace eWayCRM.API
                     this.serviceUri = this.GetApiServiceUrl(this.baseServiceUri, true);
                     this.oldServiceUriUsed = true;
 
-                    return this.Call(methodName, data);
+                    this.Call(methodName, data, readStreamAction);
                 }
 
                 throw;
             }
-
-            if (string.IsNullOrEmpty(responseJson))
-                throw new InvalidOperationException("Wcf returned nothing. That's strange.");
-
-            JObject result = JObject.Parse(responseJson);
-            
-            return result;
         }
 
         /// <summary>
@@ -415,7 +424,40 @@ namespace eWayCRM.API
 
             return this.UploadFile(itemGuid, stream, fileName, true);
         }
-        
+
+        /// <summary>
+        /// Downloads file from API to output stream.
+        /// </summary>
+        /// <param name="itemGuid">Guid of the document or email.</param>
+        /// <param name="revision">Revision of the document or email.</param>
+        /// <param name="outputStream">The output stream.</param>
+        public void DownloadFile(Guid itemGuid, int revision, Stream outputStream)
+        {
+            JObject data = new JObject();
+            data.Add("sessionId", this.sessionId);
+            data.Add("itemGuid", itemGuid.ToString());
+            data.Add("revision", revision);
+
+            this.Call("GetBinaryAttachment", data, (stream) =>
+            {
+                stream.CopyTo(outputStream);
+            });
+        }
+
+        /// <summary>
+        /// Gets information about latest document revision.
+        /// </summary>
+        /// <param name="itemGuid">Document Guid.</param>
+        /// <returns></returns>
+        public JObject GetLatestRevision(Guid itemGuid)
+        {
+            JObject data = new JObject();
+            data.Add("sessionId", this.sessionId);
+            data.Add("documtentGuid", itemGuid.ToString());
+
+            return this.Call("GetLatestRevision", data);
+        }
+
         /// <summary>
         /// Use this method to hash the eWay-CRM password in case you don't have it already available encrypted or hashed.
         /// </summary>
