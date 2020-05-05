@@ -313,6 +313,7 @@ namespace eWayCRM.API
                     this.oldServiceUriUsed = true;
 
                     this.Call(methodName, data, readStreamAction);
+                    return;
                 }
 
                 throw;
