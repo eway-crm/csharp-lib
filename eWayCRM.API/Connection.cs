@@ -26,6 +26,7 @@ namespace eWayCRM.API
         private readonly string passwordHash;
         private readonly string appIdentifier;
         private readonly string clientMachineIdentifier;
+        private readonly string accessToken;
         private readonly bool useDefaultCredentials;
         private readonly NetworkCredential networkCredential;
         private const string _uploadMethodName = "SaveBinaryAttachment";
@@ -62,6 +63,7 @@ namespace eWayCRM.API
         /// <param name="clientMachineIdentifier">The unique identifier, of the client machine. Usually a MAC address is used. Optional. If you leave it null, MAC address is used.</param>
         /// <param name="useDefaultCredentials">True to authenticate HTTP request using the default credentials of the currently logged on user.</param>
         /// <param name="networkCredential">Network credential used to authenticate HTTP request.</param>
+        /// <param name="accessToken">Access token from OAuth.</param>
         /// <exception cref="ArgumentNullException">eWay-CRM API service uri was not supplied. - apiServiceUri
         /// or
         /// eWay-CRM username was not supplied. - username
@@ -71,7 +73,7 @@ namespace eWayCRM.API
         /// The client app identifier was not supplied. - appIdentifier</exception>
         /// <exception cref="ArgumentException">The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API. - apiServiceUri</exception>
         public Connection(string apiServiceUri, string username, string passwordHash, string appIdentifier = "eWayCRM.API.CSharpConnector10", string clientMachineIdentifier = null,
-            bool useDefaultCredentials = false, NetworkCredential networkCredential = null)
+            bool useDefaultCredentials = false, NetworkCredential networkCredential = null, string accessToken = null)
         {
             if (string.IsNullOrEmpty(apiServiceUri))
                 throw new ArgumentNullException(nameof(apiServiceUri), "eWay-CRM API service uri was not supplied.");
@@ -79,7 +81,7 @@ namespace eWayCRM.API
             if (string.IsNullOrEmpty(username))
                 throw new ArgumentNullException(nameof(username), "eWay-CRM username was not supplied.");
 
-            if (string.IsNullOrEmpty(passwordHash) && !useDefaultCredentials && networkCredential == null)
+            if (string.IsNullOrEmpty(passwordHash) && !useDefaultCredentials && networkCredential == null && string.IsNullOrEmpty(accessToken))
                 throw new ArgumentNullException(nameof(passwordHash), "eWay-CRM password hash was not supplied.");
 
             if (string.IsNullOrEmpty(appIdentifier))
@@ -123,6 +125,7 @@ namespace eWayCRM.API
             this.clientMachineIdentifier = clientMachineIdentifier;
             this.useDefaultCredentials = useDefaultCredentials;
             this.networkCredential = networkCredential;
+            this.accessToken = accessToken;
         }
 
         private string GetApiServiceUrl(string baseUri, bool useOldUrl = false)
@@ -239,8 +242,12 @@ namespace eWayCRM.API
                 clientMachineIdentifier = this.clientMachineIdentifier
             }));
 
-            if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
-                throw new LoginException(response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
+            string returnCode = response.GetValue("ReturnCode").ToString();
+            if (returnCode == "rcOAuthRequired")
+                throw new OAuthRequiredException(returnCode, response.GetValue("Description").ToString());
+            
+            if (returnCode != "rcSuccess")
+                throw new LoginException(returnCode, response.GetValue("Description").ToString());
 
             this.sessionId = new Guid(response.Value<string>("SessionId"));
             this.UserGuid = new Guid(response.Value<string>("UserItemGuid"));
@@ -279,6 +286,11 @@ namespace eWayCRM.API
             webRequest.Method = WebRequestMethods.Http.Post;
             webRequest.UseDefaultCredentials = this.useDefaultCredentials;
             webRequest.ContentType = "application/json";
+
+            if (!string.IsNullOrEmpty(this.accessToken))
+            {
+                webRequest.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {this.accessToken}");
+            }
 
             if (!useDefaultCredentials)
             {

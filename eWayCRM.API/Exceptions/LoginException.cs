@@ -12,9 +12,6 @@ namespace eWayCRM.API.Exceptions
     public class LoginException : ResponseException
     {
         internal LoginException(string returnCode, string message)
-            : base("LogIn", returnCode, message)
-        {
-
-        }
+            : base("LogIn", returnCode, message) { }
     }
 }
