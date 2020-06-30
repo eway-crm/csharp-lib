@@ -12,7 +12,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright eWay System s.r.o. 2018-2020</copyright>
-    <releaseNotes>1.5.0
+    <releaseNotes>1.5.1
+	Added method to get Web Service version
+	
+	1.5.0
 	Added OAuth support
 	
 	1.3.2

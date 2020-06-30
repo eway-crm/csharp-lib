@@ -10,6 +10,9 @@ using eWayCRM.API.Exceptions;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
+using eWayCRM.API.Net;
+using System.Linq.Expressions;
+using System.Xml;
 
 namespace eWayCRM.API
 {
@@ -485,6 +488,56 @@ namespace eWayCRM.API
                 sBuilder.Append(data[i].ToString("x2"));
             }
             return sBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Gets web service version based on URL.
+        /// </summary>
+        /// <param name="webServiceUrl">Web service URL.</param>
+        /// <param name="version">Version.</param>
+        /// <returns></returns>
+        public static bool TryGetWebServiceVersion(string webServiceUrl, out Version version)
+        {
+            if (string.IsNullOrEmpty(webServiceUrl))
+                throw new ArgumentNullException(nameof(webServiceUrl));
+
+            version = new Version();
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri(UrlBuilder.Combine(webServiceUrl, "eWayWS.asmx/GetInfo")));
+            request.Method = "GET";
+            request.ContentType = "application/xml";
+            request.Accept = "application/xml";
+
+            string xmlResponse;
+            using (HttpWebResponse httpResponse = (HttpWebResponse)request.GetResponse())
+            {
+                using (Stream responseStream = httpResponse.GetResponseStream())
+                {
+                    if (responseStream == null)
+                        return false;
+
+                    using (StreamReader streamReader = new StreamReader(responseStream))
+                    {
+                        xmlResponse = streamReader.ReadToEnd();
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(xmlResponse))
+                return false;
+
+            var xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(xmlResponse);
+
+            var nsManager = new XmlNamespaceManager(xmlDocument.NameTable);
+            nsManager.AddNamespace("ns", "http://tempuri.org/");
+
+            var webServiceVersion = xmlDocument.SelectSingleNode("//ns:InfoResponse/ns:WebServiceVersion", nsManager);
+            if (webServiceVersion == null)
+                return false;
+
+            version = new Version(webServiceVersion.InnerText);
+            return true;
         }
 
         /// <summary>
