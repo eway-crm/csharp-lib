@@ -9,7 +9,7 @@ namespace eWayCRM.API.UnitTests
     [TestClass]
     public class Tests
     {
-        private const string API_URL = "https://trial.eway-crm.com/31994";
+        internal const string API_URL = "https://trial.eway-crm.com/31994";
         private const string DEV_API_URL = "http://eway-dev/eWayWSMemos_Dev";
         private const string API_USER = "api";
         private const string API_USER_PASSWORD = "ApiTrial@eWay-CRM";

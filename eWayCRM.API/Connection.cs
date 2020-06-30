@@ -287,7 +287,7 @@ namespace eWayCRM.API
             webRequest.UseDefaultCredentials = this.useDefaultCredentials;
             webRequest.ContentType = "application/json";
 
-            if (!string.IsNullOrEmpty(this.accessToken))
+            if (methodName == _loginMethodName && !string.IsNullOrEmpty(this.accessToken))
             {
                 webRequest.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {this.accessToken}");
             }
