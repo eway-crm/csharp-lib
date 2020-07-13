@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using eWayCRM.API.Net;
 using System.Linq.Expressions;
 using System.Xml;
+using eWayCRM.API.EventArgs;
 
 namespace eWayCRM.API
 {
@@ -29,12 +30,17 @@ namespace eWayCRM.API
         private readonly string passwordHash;
         private readonly string appIdentifier;
         private readonly string clientMachineIdentifier;
-        private readonly string accessToken;
+        private string accessToken;
         private readonly bool useDefaultCredentials;
         private readonly NetworkCredential networkCredential;
         private const string _uploadMethodName = "SaveBinaryAttachment";
         private const string _loginMethodName = "LogIn";
         private static readonly MD5 _md5Hash = MD5.Create();
+
+        /// <summary>
+        /// Event used to refresh access token.
+        /// </summary>
+        public event System.EventHandler<AccessTokenEventArgs> RefreshAccessToken;
 
         private Guid? sessionId;
 
@@ -214,13 +220,35 @@ namespace eWayCRM.API
             this.EnsureLogin();
             d.Add("sessionId", this.sessionId);
             JObject response = this.Call(methodName, d);
-            if (response.GetValue("ReturnCode").ToString() == "rcBadSession" && repeatSession)
+            string returnCode = response.GetValue("ReturnCode").ToString();
+
+            if (returnCode == "rcBadSession" && repeatSession)
             {
-                this.LogIn();
+                try
+                {
+                    this.LogIn();
+                }
+                catch (LoginException ex)
+                {
+                    if (ex.ReturnCode != "rcBadAccessToken" || this.RefreshAccessToken == null)
+                        throw;
+
+                    var eventArgs = new AccessTokenEventArgs();
+                    this.RefreshAccessToken(this, eventArgs);
+
+                    if (string.IsNullOrEmpty(eventArgs.AccessToken))
+                        throw;
+                        
+                    this.accessToken = eventArgs.AccessToken;
+                    this.LogIn();
+                }
+
                 return this.CallMethod(methodName, data, false);
             }
+
             if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
                 throw new ResponseException(methodName, response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
+
             return response;
         }
 
