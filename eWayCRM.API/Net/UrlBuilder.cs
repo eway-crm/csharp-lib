@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.Specialized;
-using eWayCRM.API.Net;
 
 namespace eWayCRM.API.Net
 {

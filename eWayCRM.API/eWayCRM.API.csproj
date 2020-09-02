@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connection.cs" />
+    <Compile Include="Constants\ObjectTypes.cs" />
     <Compile Include="EventArgs\AccessTokenEventArgs.cs" />
     <Compile Include="Exceptions\ClientMachineIdentifierDeterminationException.cs" />
     <Compile Include="Exceptions\LoginException.cs" />
