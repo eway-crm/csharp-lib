@@ -12,7 +12,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright eWay System s.r.o. 2018-2020</copyright>
-    <releaseNotes>1.5.2
+    <releaseNotes>1.5.3
+	Added GetDateTime method for backward compatibility.
+	
+	1.5.2
 	Allow client to refresh access token
 	
 	1.5.1
