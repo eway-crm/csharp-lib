@@ -214,6 +214,21 @@ namespace eWayCRM.API
             return this.CallMethod(methodName, data, true);
         }
 
+        private bool TryRefreshAccessToken()
+        {
+            if (this.RefreshAccessToken == null)
+                return false;
+
+            var eventArgs = new AccessTokenEventArgs();
+            this.RefreshAccessToken(this, eventArgs);
+
+            if (string.IsNullOrEmpty(eventArgs.AccessToken))
+                return false;
+
+            this.accessToken = eventArgs.AccessToken;
+            return true;
+        }
+
         private JObject CallMethod(string methodName, JObject data, bool repeatSession)
         {
             JObject d = new JObject(data);
@@ -230,16 +245,12 @@ namespace eWayCRM.API
                 }
                 catch (LoginException ex)
                 {
-                    if (ex.ReturnCode != "rcBadAccessToken" || this.RefreshAccessToken == null)
+                    if (ex.ReturnCode != "rcBadAccessToken")
                         throw;
 
-                    var eventArgs = new AccessTokenEventArgs();
-                    this.RefreshAccessToken(this, eventArgs);
-
-                    if (string.IsNullOrEmpty(eventArgs.AccessToken))
+                    if (!this.TryRefreshAccessToken())
                         throw;
-                        
-                    this.accessToken = eventArgs.AccessToken;
+                    
                     this.LogIn();
                 }
 
@@ -350,11 +361,19 @@ namespace eWayCRM.API
             }
             catch (WebException ex)
             {
-                if (!oldServiceUriUsed && ((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound && methodName == _loginMethodName && this.passwordHash != null)
+                var statusCode = ((HttpWebResponse)ex.Response).StatusCode;
+
+                if (!this.oldServiceUriUsed && statusCode == HttpStatusCode.NotFound && methodName == _loginMethodName && this.passwordHash != null)
                 {
                     this.serviceUri = this.GetApiServiceUrl(this.baseServiceUri, true);
                     this.oldServiceUriUsed = true;
 
+                    this.Call(methodName, data, readStreamAction);
+                    return;
+                }
+
+                if (statusCode == HttpStatusCode.Unauthorized && !string.IsNullOrEmpty(this.accessToken) && this.TryRefreshAccessToken())
+                {
                     this.Call(methodName, data, readStreamAction);
                     return;
                 }
