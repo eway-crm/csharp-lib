@@ -12,7 +12,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright eWay System s.r.o. 2018-2020</copyright>
-    <releaseNotes>1.5.3
+    <releaseNotes>1.5.4
+	Call RefreshAccessToken event on 401.
+	
+	1.5.3
 	Added GetDateTime method for backward compatibility.
 	
 	1.5.2
