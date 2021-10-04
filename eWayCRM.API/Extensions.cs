@@ -27,7 +27,7 @@ namespace eWayCRM.API
         public static DateTime? GetDateTime(this JToken token, string key)
         {
             JValue value = token[key] as JValue;
-            if (value == null)
+            if (value == null || value.Value == null)
                 return null;
 
             switch (value.Value)
