@@ -10,7 +10,7 @@ using eWayCRM.API.Exceptions;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
-using eWayCRM.API.Net;
+using eWay.Core.Net;
 using System.Linq.Expressions;
 using System.Xml;
 using eWayCRM.API.EventArgs;

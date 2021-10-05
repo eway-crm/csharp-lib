@@ -35,7 +35,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\..\eWay-3\eWayLibrary\MemosKey.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\eWayLibrary\MemosKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -55,13 +55,17 @@
     <Compile Include="Exceptions\OAuthRequiredException.cs" />
     <Compile Include="Exceptions\ResponseException.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Helpers\Base64Encoder.cs" />
+    <Compile Include="Helpers\OAuthHelper.cs" />
+    <Compile Include="Net\ApiCaller.cs" />
     <Compile Include="Net\ParameterCollection.cs" />
     <Compile Include="Net\UrlBuilder.cs" />
+    <Compile Include="Net\WebRequestHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\Mutex.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\eWay-3\eWayLibrary\MemosKey.snk">
+    <None Include="..\..\eWayLibrary\MemosKey.snk">
       <Link>MemosKey.snk</Link>
     </None>
     <None Include="CreateNuGetPackage.bat" />

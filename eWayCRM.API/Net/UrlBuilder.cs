@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.Specialized;
 
-namespace eWayCRM.API.Net
+namespace eWay.Core.Net
 {
     /// <summary>
     /// Class used to build URL.
