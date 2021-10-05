@@ -1,4 +1,4 @@
-﻿using eWayCRM.API.Net;
+﻿using eWay.Core.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
