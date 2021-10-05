@@ -63,6 +63,11 @@ namespace eWayCRM.API
         }
 
         /// <summary>
+        /// Gets the base WebService URL.
+        /// </summary>
+        public string WebServiceUrl => this.baseServiceUri;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Connection" /> class.
         /// </summary>
         /// <param name="apiServiceUri">The API service URI. Ex. 'https://server.mycompany.com/eway' or 'https://server.local:4443/eWay/WcfService/Service.svc'</param>
@@ -121,6 +126,7 @@ namespace eWayCRM.API
             if (apiServiceUri.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))
             {
                 this.serviceUri = apiServiceUri;
+                this.baseServiceUri = apiServiceUri.Replace("/WcfService/Service.svc", "/").Replace("/InsecureAPI.svc", "/").Replace("/API.svc", "/");
             }
             else
             {
