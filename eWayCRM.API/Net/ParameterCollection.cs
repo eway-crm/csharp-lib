@@ -57,7 +57,7 @@ namespace eWay.Core.Net
                 if (parts.Length > 0)
                 {
                     string key = parts[0].Trim(new char[] { '?', ' ' });
-                    string val = parts[1].Trim();
+                    string val = parts.Length > 1 ? parts[1].Trim() : string.Empty;
 
                     this.Add(key, val);
                 }
