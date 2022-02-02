@@ -28,11 +28,6 @@ namespace eWay.Core.Net
             string userAgent = null)
         {
             WebRequest request = WebRequestHelper.Create(url, userAgent: userAgent);
-
-            var data = (encoding ?? Encoding.UTF8).GetBytes(query);
-
-            request.ContentType = contentType;
-            request.ContentLength = data.Length;
             request.Method = method;
 
             if (!string.IsNullOrEmpty(authorization))
@@ -40,9 +35,17 @@ namespace eWay.Core.Net
                 request.Headers.Add("Authorization", authorization);
             }
 
-            using (var stream = request.GetRequestStream())
+            if (!string.IsNullOrEmpty(query))
             {
-                stream.Write(data, 0, data.Length);
+                var data = (encoding ?? Encoding.UTF8).GetBytes(query);
+
+                request.ContentType = contentType;
+                request.ContentLength = data.Length;
+
+                using (var stream = request.GetRequestStream())
+                {
+                    stream.Write(data, 0, data.Length);
+                }
             }
 
             using (WebResponse response = request.GetResponse())
