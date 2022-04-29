@@ -28,6 +28,8 @@ Connection wcfConnection = new Connection(
 
 ```
 
+⚠️ This connector does not support [Microsoft Account Authenticaion](https://kb.eway-crm.com/documentation/2-installation/2-3-installation-the-server-part/adjust-eway-crm-web-service-for-azure-login-office-365?set_language=en). If you log into eWay-CRM with your Microsoft account, this connector will not work.
+
 ## Actions at the service
 
 You can check actions available on your service on  `[service adress]/WcfService/Service.svc/help`  . We have put together a list of examples for some basic actions you can use the service for, so don't be shy an try it out.
