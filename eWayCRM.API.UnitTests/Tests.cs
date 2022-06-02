@@ -22,6 +22,8 @@ namespace eWayCRM.API.UnitTests
 
             Assert.AreEqual(new Guid("BA3FF5DF-2920-11E9-910F-00224D483D5B"), connection.UserGuid);
             Assert.IsTrue(connection.Version > new Version(5, 3));
+
+            Assert.AreEqual("rcSuccess", connection.LogOut().GetValue("ReturnCode"));
         }
 
         [TestMethod]
@@ -32,6 +34,8 @@ namespace eWayCRM.API.UnitTests
 
             Assert.AreEqual(new Guid("1ccf3ac2-aa23-11e9-8091-08606ef204e5"), connection.UserGuid);
             Assert.IsTrue(connection.Version > new Version(5, 3));
+
+            Assert.AreEqual("rcSuccess", connection.LogOut().GetValue("ReturnCode"));
         }
     }
 }

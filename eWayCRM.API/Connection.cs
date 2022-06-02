@@ -280,6 +280,21 @@ namespace eWayCRM.API
             }
         }
 
+        /// <summary>
+        /// If there is session it tries to destroy it.
+        /// </summary>
+        /// <returns>Response from API or null when there is no active session.</returns>
+        public JObject LogOut()
+        {
+            if (!this.sessionId.HasValue)
+                return null;
+
+            return this.Call("LogOut", JObject.FromObject(new
+            {
+                sessionId = this.sessionId
+            }));
+        }
+
         private void LogIn()
         {
             JObject response = this.Call(_loginMethodName, JObject.FromObject(new
