@@ -17,6 +17,9 @@ namespace eWay.Core.Net
         public UrlBuilder(string url)
             : base(url) { }
 
+        public UrlBuilder(Uri uri)
+            : base(uri) { }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UrlBuilder"/> class.
         /// </summary>
@@ -26,10 +29,7 @@ namespace eWay.Core.Net
         /// <summary>
         /// Gets the URL.
         /// </summary>
-        public string Url
-        {
-            get { return this.Uri.AbsoluteUri; }
-        }
+        public string Url => this.Uri.AbsoluteUri;
 
         /// <summary>
         /// Gets or sets the specified parameter.
@@ -68,6 +68,15 @@ namespace eWay.Core.Net
                 throw new ArgumentNullException(nameof(relativeUrl));
 
             return $"{baseUrl.TrimEnd('/')}/{relativeUrl.TrimStart('/')}";
+        }
+
+        /// <summary>
+        /// Sets Path without escaping string with Uri.InternalEscapeString call.
+        /// </summary>
+        public void SetPathWithoutEscaping(string path)
+        {
+            if (!ReflectionHelper.SetPrivateMemberOfClass(this, typeof(UriBuilder), "m_path", path))
+                throw new InvalidOperationException("Could not set Url path");
         }
     }
 }
