@@ -382,6 +382,9 @@ namespace eWayCRM.API
             }
             catch (WebException ex)
             {
+                if (!(ex.Response is HttpWebResponse))
+                    throw;
+
                 var statusCode = ((HttpWebResponse)ex.Response).StatusCode;
 
                 if (!this.oldServiceUriUsed && statusCode == HttpStatusCode.NotFound && methodName == _loginMethodName && this.passwordHash != null)

@@ -12,7 +12,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright eWay System s.r.o. 2018-2021</copyright>
-    <releaseNotes>1.5.8
+    <releaseNotes>1.5.9
+	Fixed possible NullReferenceException during login.
+	Updated Newtonsoft.Json.
+	
+	1.5.8
 	Updated Newtonsoft.Json.
 
 	1.5.7
