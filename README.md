@@ -28,7 +28,7 @@ Connection wcfConnection = new Connection(
 
 ```
 
-⚠️ This connector does not support [Microsoft Account Authenticaion](https://kb.eway-crm.com/documentation/2-installation/2-3-installation-the-server-part/adjust-eway-crm-web-service-for-azure-login-office-365?set_language=en). If you log into eWay-CRM with your Microsoft account, this connector will not work.
+⚠️ If you log into eWay-CRM with your Microsoft account [Microsoft Account Authentication](https://kb.eway-crm.com/documentation/2-installation/2-3-installation-the-server-part/adjust-eway-crm-web-service-for-azure-login-office-365?set_language=en), the connector will not work with the legacy auth used in the examples. You will have to implement OAuth 2.0 authorization flow to get access and refresh token. You can see how to implement it in [TimeClock app code](https://github.com/rstefko/TimeClock/commit/5e86941c159e964c273ca3eaed9c2c59f2ced6ed). A ClientID / ClientSecret for you App will have to be created ([click here](https://kb.eway-crm.com/en/documentation/6-add-ins/integration-with-wordpress-1/integration-with-wordpress) for more details).
 
 ## Actions at the service
 
