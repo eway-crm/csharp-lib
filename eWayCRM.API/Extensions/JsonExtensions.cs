@@ -1,32 +1,24 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace eWayCRM.API
+namespace eWayCRM.API.Extensions
 {
-    public static class Extensions
+    /// <summary>
+    /// Class with extension methods.
+    /// </summary>
+    public static class JsonExtensions
     {
-        /// <summary>
-        /// Formats DateTime for JSON communication with API.
-        /// </summary>
-        /// <param name="dateTime">The date time.</param>
-        /// <returns></returns>
-        public static string ToStringForApi(this DateTime dateTime)
-        {
-            return dateTime.ToString("u");
-        }
-
         /// <summary>
         /// Gets date time from the JToken. This method can handle old format with space instead of T.
         /// </summary>
         /// <param name="token">The JToken.</param>
         /// <param name="key">The key.</param>
         /// <returns></returns>
-        public static DateTime? GetDateTime(this JToken token, string key)
+        public static DateTime? GetDateTime(this Newtonsoft.Json.Linq.JToken token, string key)
         {
-            JValue value = token[key] as JValue;
+            Newtonsoft.Json.Linq.JValue value = token[key] as Newtonsoft.Json.Linq.JValue;
             if (value == null || value.Value == null)
                 return null;
 
