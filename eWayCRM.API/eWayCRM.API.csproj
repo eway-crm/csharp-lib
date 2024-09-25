@@ -54,7 +54,8 @@
     <Compile Include="Exceptions\LoginException.cs" />
     <Compile Include="Exceptions\OAuthRequiredException.cs" />
     <Compile Include="Exceptions\ResponseException.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Extensions\ApiExtensions.cs" />
+    <Compile Include="Extensions\JsonExtensions.cs" />
     <Compile Include="Helpers\Base64Encoder.cs" />
     <Compile Include="Helpers\OAuthHelper.cs" />
     <Compile Include="Net\ApiCaller.cs" />
