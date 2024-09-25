@@ -11,8 +11,11 @@
     <iconUrl>https://raw.githubusercontent.com/eway-crm/csharp-lib/master/logo_64.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
-    <copyright>Copyright eWay System s.r.o. 2018-2021</copyright>
-    <releaseNotes>1.5.9
+    <copyright>Copyright eWay System s.r.o. 2018-2024</copyright>
+    <releaseNotes>1.6.0
+	ToStringForApi now supports new RFC format for date time.
+	
+	1.5.9
 	Fixed possible NullReferenceException during login.
 	Updated Newtonsoft.Json.
 	
