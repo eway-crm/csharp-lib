@@ -1,4 +1,3 @@
-![eWay-CRM Logo](logo_header.png)
 # eWay-CRM API
 API used for communication with [eWay-CRM](http://www.eway-crm.com/) web service. It is a wrapper over HTTP/S communication and sessions. See our [documentation](https://kb.eway-crm.com/documentation/6-add-ins/6-7-api-1) for more information. 
 
@@ -34,36 +33,36 @@ Connection wcfConnection = new Connection(
 
 You can check actions available on your service on  `[service adress]/WcfService/Service.svc/help`  . We have put together a list of examples for some basic actions you can use the service for, so don't be shy an try it out.
 
-### [Create new company](Examples/CreateNewCompany/README.md)<br />
-Example showcasing creation of new Company.<br />
+### [Create new company](Examples/CreateNewCompany/README.md)
+Example showcasing creation of new Company. \
 Sample code [here](Examples/CreateNewCompany/Program.cs).
 
-### [Edit existing company](Examples/EditExistingCompany/README.md)<br />
-Example showcasing editing existing Company.<br />
+### [Edit existing company](Examples/EditExistingCompany/README.md)
+Example showcasing editing existing Company. \
 Sample code [here](Examples/EditExistingCompany/Program.cs).
 
-### [List all companies](Examples/ListAllCompanies/README.md)<br />
-Example showcasing listing of all existing Companies.<br />
+### [List all companies](Examples/ListAllCompanies/README.md)
+Example showcasing listing of all existing Companies. \
 Sample code [here](Examples/ListAllCompanies/Program.cs).
 
-### [Search for company](Examples/SearchForCompany/README.md)<br />
-Example showcasing serching for Company by parameters.<br />
+### [Search for company](Examples/SearchForCompany/README.md)
+Example showcasing serching for Company by parameters. \
 Sample code [here](Examples/SearchForCompany/Program.cs).
 
-### [Delete company](Examples/DeleteCompany/README.md)<br />
-Example showcasing deletion of Company.<br />
+### [Delete company](Examples/DeleteCompany/README.md)
+Example showcasing deletion of Company. \
 Sample code [here](Examples/DeleteCompany/Program.cs).
 
-### [Link existing item](Examples/LinkExistingItem/README.md)<br />
-Example showcasing creation of simple relation.<br />
+### [Link existing item](Examples/LinkExistingItem/README.md)
+Example showcasing creation of simple relation. \
 Sample code [here](Examples/LinkExistingItem/Program.cs).
 
-### [Create document](Examples/CreateDocument/README.md)<br />
-Example showcasing creation of document.<br />
+### [Create document](Examples/CreateDocument/README.md)
+Example showcasing creation of document. \
 Sample code [here](Examples/CreateDocument/Program.cs).
 
-### [Additional fields](Examples/AdditionalFields/README.md)<br />
-Example showcasing manipulation with additional fields.<br />
+### [Additional fields](Examples/AdditionalFields/README.md)
+Example showcasing manipulation with additional fields. \
 Sample code [here](Examples/AdditionalFields/Program.cs).
 
 ## Folder name

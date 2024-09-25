@@ -6,9 +6,10 @@
     <title>eWay-CRM API Connector</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>https://github.com/eway-crm/csharp-lib/blob/master/LICENSE</licenseUrl>
+    <readme>docs\README.md</readme>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/eway-crm/csharp-lib</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/eway-crm/csharp-lib/master/logo_64.png</iconUrl>
+    <icon>images\logo_64.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright eWay System s.r.o. 2018-2024</copyright>
@@ -50,4 +51,8 @@
       <dependency id="Newtonsoft.Json" version="11.0.2" />
     </dependencies>
   </metadata>
+  <files>
+    <file src="..\README.md" target="docs\" />
+    <file src="..\logo_64.png" target="images\" />
+  </files>
 </package>
