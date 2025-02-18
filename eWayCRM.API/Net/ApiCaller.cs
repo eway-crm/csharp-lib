@@ -1,4 +1,5 @@
-﻿using eWay.Core.Helpers;
+﻿using eWay.Core.Extensions;
+using eWay.Core.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +30,7 @@ namespace eWay.Core.Net
         public static string MakeRequest(string url, string query, string method = WebRequestMethods.Http.Post, string contentType = "application/x-www-form-urlencoded", Encoding encoding = null, string authorization = null,
             string userAgent = null)
         {
-            byte[] contentData = (encoding ?? Encoding.UTF8).GetBytes(query);
+            byte[] contentData = !string.IsNullOrEmpty(query) ? (encoding ?? Encoding.UTF8).GetBytes(query) : null;
 
             using (WebResponse response = MakeRequestInternal(url, method, contentData, contentType, authorization, userAgent))
             {
@@ -52,7 +53,7 @@ namespace eWay.Core.Net
         /// <param name="authorization">The authorization header.</param>
         /// <param name="userAgent">User Agent.</param>
         /// <returns></returns>
-        public static Stream MakeRequest(string url, byte[] contentData = null, string method = WebRequestMethods.Http.Post, string contentType = "application/x-www-form-urlencoded", 
+        public static Stream MakeRequest(string url, byte[] contentData = null, string method = WebRequestMethods.Http.Post, string contentType = "application/x-www-form-urlencoded",
             string authorization = null, string userAgent = null)
         {
             MemoryStream stream = new MemoryStream();
@@ -82,7 +83,7 @@ namespace eWay.Core.Net
                 request.Headers.Add("Authorization", authorization);
             }
 
-            if (contentData != null)
+            if (!contentData.IsEmpty())
             {
                 request.ContentType = contentType;
                 request.ContentLength = contentData.Length;
