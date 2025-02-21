@@ -89,17 +89,33 @@ namespace eWay.Core.Net
             {
                 request.ContentType = contentType;
 
+                if (TryGetStreamLength(requestStream, out long contentLength))
+                {
+                    request.ContentLength = contentLength;
+                }
+
                 using (Stream stream = request.GetRequestStream())
                 {
                     requestStream.CopyTo(stream);
-
-                    // Request stream could not support to get it's Length like MessageBodyStream does not
-                    // for that reason get it's length by it's current position
-                    request.ContentLength = requestStream.Position;
                 }
             }
 
             return request.GetResponse();
+        }
+
+        private static bool TryGetStreamLength(Stream stream, out long length)
+        {
+            // Some streams does not supporting getting it's length (like MessageBodyStream for instance)
+            try
+            {
+                length = stream.Length;
+                return true;
+            }
+            catch
+            {
+                length = -1;
+                return false;
+            }
         }
 
         /// <summary>
