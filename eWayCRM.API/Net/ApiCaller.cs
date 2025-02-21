@@ -88,11 +88,14 @@ namespace eWay.Core.Net
             if (requestStream != null)
             {
                 request.ContentType = contentType;
-                request.ContentLength = requestStream.Length;
 
                 using (Stream stream = request.GetRequestStream())
                 {
                     requestStream.CopyTo(stream);
+
+                    // Request stream could not support to get it's Length like MessageBodyStream does not
+                    // for that reason get it's length by it's current position
+                    request.ContentLength = requestStream.Position;
                 }
             }
 
