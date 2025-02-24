@@ -89,9 +89,9 @@ namespace eWay.Core.Net
             {
                 request.ContentType = contentType;
 
-                if (TryGetStreamLength(requestStream, out long contentLength))
+                if (requestStream.CanSeek)
                 {
-                    request.ContentLength = contentLength;
+                    request.ContentLength = requestStream.Length;
                 }
 
                 using (Stream stream = request.GetRequestStream())
@@ -102,22 +102,7 @@ namespace eWay.Core.Net
 
             return request.GetResponse();
         }
-
-        private static bool TryGetStreamLength(Stream stream, out long length)
-        {
-            // Some streams does not supporting getting it's length (like MessageBodyStream for instance)
-            try
-            {
-                length = stream.Length;
-                return true;
-            }
-            catch
-            {
-                length = -1;
-                return false;
-            }
-        }
-
+        
         /// <summary>
         /// Creates basic authorization header.
         /// </summary>
