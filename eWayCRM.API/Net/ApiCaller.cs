@@ -30,15 +30,23 @@ namespace eWay.Core.Net
         public static string MakeRequest(string url, string query, string method = WebRequestMethods.Http.Post, string contentType = "application/x-www-form-urlencoded", Encoding encoding = null, string authorization = null,
             string userAgent = null)
         {
-            byte[] contentData = !string.IsNullOrEmpty(query) ? (encoding ?? Encoding.UTF8).GetBytes(query) : null;
+            MemoryStream stream = null;
 
-            using (WebResponse response = MakeRequestInternal(url, method, contentData, contentType, authorization, userAgent))
+            if (!string.IsNullOrEmpty(query))
             {
-                // Get the stream containing content returned by the server.
-                using (Stream responseStream = response.GetResponseStream())
-                using (StreamReader reader = new StreamReader(responseStream))
+                stream = new MemoryStream((encoding ?? Encoding.UTF8).GetBytes(query));
+            }
+
+            using (stream)
+            {
+                using (WebResponse response = MakeRequestInternal(url, method, stream, contentType, authorization, userAgent))
                 {
-                    return reader.ReadToEnd();
+                    // Get the stream containing content returned by the server.
+                    using (Stream responseStream = response.GetResponseStream())
+                    using (StreamReader reader = new StreamReader(responseStream))
+                    {
+                        return reader.ReadToEnd();
+                    }
                 }
             }
         }
@@ -47,33 +55,27 @@ namespace eWay.Core.Net
         /// Makes request to a specified URL.
         /// </summary>
         /// <param name="url">The URL.</param>
-        /// <param name="contentData">The content data.</param>
+        /// <param name="requestStream">The request stream.</param>
         /// <param name="method">The request method.</param>
         /// <param name="contentType">The content type.</param>
         /// <param name="authorization">The authorization header.</param>
         /// <param name="userAgent">User Agent.</param>
         /// <returns></returns>
-        public static Stream MakeRequest(string url, byte[] contentData = null, string method = WebRequestMethods.Http.Post, string contentType = "application/x-www-form-urlencoded",
+        public static Stream MakeRequest(string url, Stream requestStream = null, string method = WebRequestMethods.Http.Post, string contentType = "application/x-www-form-urlencoded",
             string authorization = null, string userAgent = null)
         {
             MemoryStream stream = new MemoryStream();
-            using (WebResponse response = MakeRequestInternal(url, method, contentData, contentType, authorization, userAgent))
+            using (WebResponse response = MakeRequestInternal(url, method, requestStream, contentType, authorization, userAgent))
             {
                 using (Stream responseStream = response.GetResponseStream())
                 {
-                    // Use default buffer size from Stream.CopyTo method
-                    byte[] array = new byte[81920];
-                    int count;
-                    while ((count = responseStream.Read(array, 0, array.Length)) != 0)
-                    {
-                        stream.Write(array, 0, count);
-                    }
+                    responseStream.CopyTo(stream);
                 }
             }
             return stream;
         }
 
-        private static WebResponse MakeRequestInternal(string url, string method, byte[] contentData, string contentType, string authorization = null, string userAgent = null)
+        private static WebResponse MakeRequestInternal(string url, string method, Stream requestStream, string contentType, string authorization = null, string userAgent = null)
         {
             WebRequest request = WebRequestHelper.Create(url, userAgent: userAgent);
             request.Method = method;
@@ -83,20 +85,24 @@ namespace eWay.Core.Net
                 request.Headers.Add("Authorization", authorization);
             }
 
-            if (!contentData.IsEmpty())
+            if (requestStream != null)
             {
                 request.ContentType = contentType;
-                request.ContentLength = contentData.Length;
+
+                if (requestStream.CanSeek)
+                {
+                    request.ContentLength = requestStream.Length;
+                }
 
                 using (Stream stream = request.GetRequestStream())
                 {
-                    stream.Write(contentData, 0, contentData.Length);
+                    requestStream.CopyTo(stream);
                 }
             }
 
             return request.GetResponse();
         }
-
+        
         /// <summary>
         /// Creates basic authorization header.
         /// </summary>
