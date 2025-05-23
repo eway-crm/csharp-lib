@@ -188,6 +188,41 @@ namespace eWayCRM.API
         /// <summary>
         /// Calls the given method against the eWay-CRM API.
         /// </summary>
+        /// <param name="methodName">Name of the method. Ex. 'GetCompanies'</param>
+        /// <param name="jsonData">The JSON parameters posted to the method. Posting sessionId is not necessary. Ex.:
+        /// {
+        ///     transmitObject: {
+        ///         FileAs: "My New Company"
+        ///     }
+        /// }</param>
+        /// <returns>
+        /// JSON data returned by the API service.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// The method name was not supplied. - methodName
+        /// or
+        /// data - The parameter JSON data were not supplied. Supply at least an empty JSON object.
+        /// </exception>
+        /// <exception cref="LoginException">
+        /// Logging into eWay-CRM was unsuccessful.
+        /// </exception>
+        /// <exception cref="ResponseException">
+        /// Method calling ended up badly.
+        /// </exception>
+        public JObject CallMethod(string methodName, string jsonData)
+        {
+            if (string.IsNullOrEmpty(methodName))
+                throw new ArgumentNullException("The method name was not supplied.", nameof(methodName));
+
+            if (string.IsNullOrEmpty(jsonData))
+                throw new ArgumentNullException("JSON data were not supplied.", nameof(jsonData));
+
+            return this.CallMethod(methodName, JObject.Parse(jsonData));
+        }
+
+        /// <summary>
+        /// Calls the given method against the eWay-CRM API.
+        /// </summary>
         /// <param name="methodName">Name of the method. Ex. 'SaveCompany'</param>
         /// <param name="data">The JSON parameters posted to the method. Posting sessionId is not necessary. Ex.:
         /// {
@@ -510,6 +545,44 @@ namespace eWayCRM.API
                 throw new ArgumentNullException(nameof(fileName));
 
             return this.UploadFile(itemGuid, stream, fileName, true);
+        }
+
+        /// <summary>
+        /// Uploads document to eWay-CRM API. It calls UploadFile to upload binary data and SaveDocument to create the document entity.
+        /// </summary>
+        /// <param name="filePath">Path to file.</param>
+        /// <param name="itemGuid">New document GUID.</param>
+        /// <returns></returns>
+        public JObject UploadDocument(string filePath, Guid itemGuid)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentNullException(nameof(filePath));
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("The file for uploading was not found.", filePath);
+
+            // Upload BinaryData
+            var response = this.UploadFile(filePath, itemGuid);
+            if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
+                throw new ResponseException("UploadFile", response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
+
+            // Create Document
+            response = this.CallMethod("SaveDocument", JObject.FromObject(new
+            {
+                transmitObject = new
+                {
+                    ItemGUID = itemGuid,
+                    FileAs = Path.GetFileName(filePath),
+                    DocName = Path.GetFileNameWithoutExtension(filePath),
+                    Extension = Path.GetExtension(filePath).Trim('.'),
+                    DocSize = new FileInfo(filePath).Length
+                }
+            }));
+            
+            if (response.GetValue("ReturnCode").ToString() != "rcSuccess")
+                throw new ResponseException("SaveDocument", response.GetValue("ReturnCode").ToString(), response.GetValue("Description").ToString());
+
+            return response;
         }
 
         /// <summary>

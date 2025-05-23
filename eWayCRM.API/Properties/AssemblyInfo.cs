@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("eWay System s.r.o.")]
 [assembly: AssemblyProduct("eWayCRM.API")]
-[assembly: AssemblyCopyright("Copyright © eWay System s.r.o. 2018-2024")]
+[assembly: AssemblyCopyright("Copyright © eWay System s.r.o. 2018-2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.6.2")]
-[assembly: AssemblyFileVersion("1.6.2")]
+[assembly: AssemblyVersion("1.6.3")]
+[assembly: AssemblyFileVersion("1.6.3")]
