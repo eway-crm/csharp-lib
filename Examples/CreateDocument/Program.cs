@@ -16,7 +16,7 @@ namespace ExamplesTesting.CreateDocument
         {
             // Connection to API
             Connection wcfConnection = new Connection(
-                "https://trial.eway-crm.com/31994",
+                "https://free.eway-crm.com/31994",
                 "api",
                 Connection.HashPassword("ApiTrial@eWay-CRM"),
                 "TestingConnector01"

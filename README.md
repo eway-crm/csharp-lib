@@ -19,7 +19,7 @@ To communicate with eWay-CRM web service, we first have to establish connection.
 ```C#
 
 Connection wcfConnection = new Connection(
-	"https://trial.eway-crm.com/31994",
+	"https://free.eway-crm.com/31994",
 	"api",
 	Connection.HashPassword("ApiTrial@eWay-CRM"),
 	"ExampleApplication100"
