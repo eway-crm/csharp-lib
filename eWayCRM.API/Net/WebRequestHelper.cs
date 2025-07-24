@@ -38,6 +38,7 @@ namespace eWay.Core.Net
             }
 #endif
 
+#if (CORE)
             // The following code it taken from http://stackoverflow.com/questions/490177/how-do-i-determine-elegantly-if-proxy-authentication-is-required-in-c-winforms
             // This code needs to be tested
 
@@ -47,6 +48,7 @@ namespace eWay.Core.Net
             request.Proxy = proxy;
             request.PreAuthenticate = true;
             //HACK: end add proxy
+#endif
 
             if (!string.IsNullOrEmpty(userAgent))
             {
