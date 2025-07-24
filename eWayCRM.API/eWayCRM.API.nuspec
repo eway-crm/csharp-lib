@@ -56,7 +56,7 @@ Added support for insecure API
     </releaseNotes>
     <tags>eWay CRM eWay-CRM API</tags>
     <dependencies>
-      <dependency id="Newtonsoft.Json" version="11.0.2" />
+      <dependency id="Newtonsoft.Json" version="13.0" />
     </dependencies>
   </metadata>
   <files>
