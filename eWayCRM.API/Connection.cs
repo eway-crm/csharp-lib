@@ -105,7 +105,7 @@ namespace eWayCRM.API
                 throw new ArgumentException("The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API.", nameof(apiServiceUri));
 
             if (!Regex.IsMatch(appIdentifier, "^[a-zA-Z][a-zA-Z].*\\d$"))
-                throw new ArgumentException("The client app identifier must contain at least one alphabetic character on the beginning and at least one numeric character at the end.", nameof(appIdentifier));
+                throw new ArgumentException("The client app identifier must contain at least two alphabetic characters on the beginning and at least one numeric character at the end.", nameof(appIdentifier));
 
             if (useDefaultCredentials && !apiServiceUri.StartsWith("https://"))
                 throw new ArgumentException("Secure communication (https) has to be used with useDefaultCredentials parameter", nameof(useDefaultCredentials));
