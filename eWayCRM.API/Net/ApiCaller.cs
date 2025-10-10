@@ -26,9 +26,10 @@ namespace eWay.Core.Net
         /// <param name="encoding">The encoding.</param>
         /// <param name="authorization">The authorization header.</param>
         /// <param name="userAgent">User Agent.</param>
+        /// <param name="timeout">Request timeout in miliseconds.</param>
         /// <returns></returns>
         public static string MakeRequest(string url, string query, string method = WebRequestMethods.Http.Post, string contentType = "application/x-www-form-urlencoded", Encoding encoding = null, string authorization = null,
-            string userAgent = null)
+            string userAgent = null, int? timeout = null)
         {
             MemoryStream stream = null;
 
@@ -39,7 +40,7 @@ namespace eWay.Core.Net
 
             using (stream)
             {
-                using (WebResponse response = MakeRequestInternal(url, method, stream, contentType, authorization, userAgent))
+                using (WebResponse response = MakeRequestInternal(url, method, stream, contentType, authorization, userAgent, timeout))
                 {
                     // Get the stream containing content returned by the server.
                     using (Stream responseStream = response.GetResponseStream())
@@ -75,10 +76,16 @@ namespace eWay.Core.Net
             return stream;
         }
 
-        private static WebResponse MakeRequestInternal(string url, string method, Stream requestStream, string contentType, string authorization = null, string userAgent = null)
+        private static WebResponse MakeRequestInternal(string url, string method, Stream requestStream, string contentType, string authorization = null, string userAgent = null,
+            int? timeout = null)
         {
             WebRequest request = WebRequestHelper.Create(url, userAgent: userAgent);
             request.Method = method;
+
+            if (timeout.HasValue)
+            {
+                request.Timeout = timeout.Value;
+            }
 
             if (!string.IsNullOrEmpty(authorization))
             {
