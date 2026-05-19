@@ -34,7 +34,7 @@ namespace eWayCRM.API
         private string accessToken;
         private readonly bool useDefaultCredentials;
         private readonly NetworkCredential networkCredential;
-        private readonly DateParseHandling dateParseHandling;
+        private readonly DateParseHandling? dateParseHandling;
         private const string _uploadMethodName = "SaveBinaryAttachment";
         private const string _loginMethodName = "LogIn";
         private static readonly MD5 _md5Hash = MD5.Create();
@@ -80,7 +80,7 @@ namespace eWayCRM.API
         /// <param name="useDefaultCredentials">True to authenticate HTTP request using the default credentials of the currently logged on user.</param>
         /// <param name="networkCredential">Network credential used to authenticate HTTP request.</param>
         /// <param name="accessToken">Access token from OAuth.</param>
-        /// <param name="dateTimeZoneHandling">Controls how datetime values are handled during JSON deserialization of API responses. Default is <see cref="DateTimeZoneHandling.RoundtripKind"/>. Use <see cref="DateTimeZoneHandling.Utc"/> to treat all datetime strings from the server as UTC (useful when the eWay-CRM server returns datetimes in UTC without timezone info).</param>
+        /// <param name="dateParseHandling">Controls how datetime strings are parsed during JSON deserialization of API responses. When null (default), uses <see cref="Newtonsoft.Json.Linq.JObject.Parse"/> and preserves the original behavior. Set to <see cref="DateParseHandling.DateTimeOffset"/> to preserve timezone offset information in datetime values returned by the server.</param>
         /// <exception cref="ArgumentNullException">eWay-CRM API service uri was not supplied. - apiServiceUri
         /// or
         /// eWay-CRM username was not supplied. - username
@@ -90,7 +90,7 @@ namespace eWayCRM.API
         /// The client app identifier was not supplied. - appIdentifier</exception>
         /// <exception cref="ArgumentException">The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API. - apiServiceUri</exception>
         public Connection(string apiServiceUri, string username, string passwordHash, string appIdentifier = "eWayCRM.API.CSharpConnector10", string clientMachineIdentifier = null,
-            bool useDefaultCredentials = false, NetworkCredential networkCredential = null, string accessToken = null, DateParseHandling dateParseHandling = DateParseHandling.DateTime)
+            bool useDefaultCredentials = false, NetworkCredential networkCredential = null, string accessToken = null, DateParseHandling? dateParseHandling = null)
         {
             if (string.IsNullOrEmpty(apiServiceUri))
                 throw new ArgumentNullException(nameof(apiServiceUri), "eWay-CRM API service uri was not supplied.");
@@ -376,9 +376,13 @@ namespace eWayCRM.API
 
         private JObject ParseResponse(string responseJson)
         {
-            using (var reader = new JsonTextReader(new StringReader(responseJson)))
+            if (this.dateParseHandling == null)
+                return JObject.Parse(responseJson);
+
+            using (var stringReader = new StringReader(responseJson))
+            using (var reader = new JsonTextReader(stringReader))
             {
-                reader.DateParseHandling = this.dateParseHandling;
+                reader.DateParseHandling = this.dateParseHandling.Value;
                 return JObject.Load(reader);
             }
         }
