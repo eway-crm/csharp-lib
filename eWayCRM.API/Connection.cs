@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using eWayCRM.API.Exceptions;
 using System.Net.Sockets;
@@ -33,6 +34,7 @@ namespace eWayCRM.API
         private string accessToken;
         private readonly bool useDefaultCredentials;
         private readonly NetworkCredential networkCredential;
+        private readonly DateParseHandling dateParseHandling;
         private const string _uploadMethodName = "SaveBinaryAttachment";
         private const string _loginMethodName = "LogIn";
         private static readonly MD5 _md5Hash = MD5.Create();
@@ -78,6 +80,7 @@ namespace eWayCRM.API
         /// <param name="useDefaultCredentials">True to authenticate HTTP request using the default credentials of the currently logged on user.</param>
         /// <param name="networkCredential">Network credential used to authenticate HTTP request.</param>
         /// <param name="accessToken">Access token from OAuth.</param>
+        /// <param name="dateTimeZoneHandling">Controls how datetime values are handled during JSON deserialization of API responses. Default is <see cref="DateTimeZoneHandling.RoundtripKind"/>. Use <see cref="DateTimeZoneHandling.Utc"/> to treat all datetime strings from the server as UTC (useful when the eWay-CRM server returns datetimes in UTC without timezone info).</param>
         /// <exception cref="ArgumentNullException">eWay-CRM API service uri was not supplied. - apiServiceUri
         /// or
         /// eWay-CRM username was not supplied. - username
@@ -87,7 +90,7 @@ namespace eWayCRM.API
         /// The client app identifier was not supplied. - appIdentifier</exception>
         /// <exception cref="ArgumentException">The *.asmx file is not the right service endpoint. This connection is meant to be used against the eWay-CRM WCF API. - apiServiceUri</exception>
         public Connection(string apiServiceUri, string username, string passwordHash, string appIdentifier = "eWayCRM.API.CSharpConnector10", string clientMachineIdentifier = null,
-            bool useDefaultCredentials = false, NetworkCredential networkCredential = null, string accessToken = null)
+            bool useDefaultCredentials = false, NetworkCredential networkCredential = null, string accessToken = null, DateParseHandling dateParseHandling = DateParseHandling.DateTime)
         {
             if (string.IsNullOrEmpty(apiServiceUri))
                 throw new ArgumentNullException(nameof(apiServiceUri), "eWay-CRM API service uri was not supplied.");
@@ -141,6 +144,7 @@ namespace eWayCRM.API
             this.useDefaultCredentials = useDefaultCredentials;
             this.networkCredential = networkCredential;
             this.accessToken = accessToken;
+            this.dateParseHandling = dateParseHandling;
         }
 
         private string GetApiServiceUrl(string baseUri, bool useOldUrl = false)
@@ -367,9 +371,16 @@ namespace eWayCRM.API
             if (string.IsNullOrEmpty(responseJson))
                 throw new InvalidOperationException("Wcf returned nothing. That's strange.");
 
-            JObject result = JObject.Parse(responseJson);
+            return this.ParseResponse(responseJson);
+        }
 
-            return result;
+        private JObject ParseResponse(string responseJson)
+        {
+            using (var reader = new JsonTextReader(new StringReader(responseJson)))
+            {
+                reader.DateParseHandling = this.dateParseHandling;
+                return JObject.Load(reader);
+            }
         }
 
         private void Call(string methodName, JObject data, Action<Stream> readStreamAction)
@@ -759,9 +770,7 @@ namespace eWayCRM.API
             if (string.IsNullOrEmpty(responseJson))
                 throw new InvalidOperationException("Wcf returned nothing. That's strange.");
 
-            JObject result = JObject.Parse(responseJson);
-
-            return result;
+            return this.ParseResponse(responseJson);
         }
 
         private string GetMethodUri(string methodName)
