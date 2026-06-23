@@ -376,13 +376,15 @@ namespace eWayCRM.API
 
         private JObject ParseResponse(string responseJson)
         {
-            if (this.dateParseHandling == null)
+            //REQUIRED; If dateParseHandling is not stored in local var, it creates the IL ldflda instruction that can result in some partial trust envs in System.Security.VerificationException: Operation could destabilize the runtime.
+            var handling = this.dateParseHandling;
+            if (handling == null)
                 return JObject.Parse(responseJson);
 
             using (var stringReader = new StringReader(responseJson))
             using (var reader = new JsonTextReader(stringReader))
             {
-                reader.DateParseHandling = this.dateParseHandling.Value;
+                reader.DateParseHandling = handling.Value;
                 return JObject.Load(reader);
             }
         }
