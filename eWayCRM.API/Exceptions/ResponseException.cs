@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace eWayCRM.API.Exceptions
@@ -9,6 +10,7 @@ namespace eWayCRM.API.Exceptions
     /// Exception thrown when the API service does not respond correctly (return code was not "rcSuccess").
     /// </summary>
     /// <seealso cref="System.Exception" />
+    [Serializable]
     public class ResponseException : Exception
     {
         private readonly string returnCode;
@@ -53,6 +55,20 @@ namespace eWayCRM.API.Exceptions
 
             this.returnCode = returnCode;
             this.methodName = methodName;
+        }
+
+        protected ResponseException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            returnCode = info.GetString(nameof(ReturnCode));
+            methodName = info.GetString(nameof(MethodName));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue(nameof(ReturnCode), returnCode);
+            info.AddValue(nameof(MethodName), methodName);
         }
     }
 }
