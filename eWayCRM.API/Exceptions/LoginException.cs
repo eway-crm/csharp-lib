@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
 
 namespace eWayCRM.API.Exceptions
 {
@@ -15,8 +11,5 @@ namespace eWayCRM.API.Exceptions
     {
         internal LoginException(string returnCode, string message)
             : base("LogIn", returnCode, message) { }
-
-        protected LoginException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
     }
 }

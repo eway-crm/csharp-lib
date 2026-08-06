@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Security;
-using System.Text;
 
 namespace eWayCRM.API.Exceptions
 {
@@ -14,8 +10,8 @@ namespace eWayCRM.API.Exceptions
     [Serializable]
     public class ResponseException : Exception
     {
-        private readonly string returnCode;
-        private readonly string methodName;
+        [NonSerialized]
+        private ExceptionState state;
 
         /// <summary>
         /// Gets the return code.
@@ -27,7 +23,7 @@ namespace eWayCRM.API.Exceptions
         {
             get
             {
-                return returnCode;
+                return state.ReturnCode;
             }
         }
 
@@ -41,7 +37,7 @@ namespace eWayCRM.API.Exceptions
         {
             get
             {
-                return methodName;
+                return state.MethodName;
             }
         }
 
@@ -54,23 +50,27 @@ namespace eWayCRM.API.Exceptions
             if (string.IsNullOrEmpty(returnCode))
                 throw new ArgumentNullException(nameof(returnCode));
 
-            this.returnCode = returnCode;
-            this.methodName = methodName;
+            state.MethodName = methodName;
+            state.ReturnCode = returnCode;
+            SerializeObjectState += (sender, e) => e.AddSerializedState(state);
         }
 
-        protected ResponseException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            returnCode = info.GetString(nameof(ReturnCode));
-            methodName = info.GetString(nameof(MethodName));
-        }
+        // No (SerializationInfo, StreamingContext) constructor — the SafeSerialization
+        // mechanism restores state via ExceptionState.CompleteDeserialization. Adding one
+        // introduces the "Stack empty" InvalidOperationException.
 
-        [SecurityCritical]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        [Serializable]
+        private struct ExceptionState : ISafeSerializationData
         {
-            base.GetObjectData(info, context);
-            info.AddValue(nameof(ReturnCode), returnCode);
-            info.AddValue(nameof(MethodName), methodName);
+            public string ReturnCode;
+            public string MethodName;
+
+            public void CompleteDeserialization(object obj)
+            {
+                var ex = (ResponseException)obj;
+                ex.state = this;
+                ex.SerializeObjectState += (sender, e) => e.AddSerializedState(ex.state);
+            }
         }
     }
 }
