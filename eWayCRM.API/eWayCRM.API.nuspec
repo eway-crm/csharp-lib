@@ -14,6 +14,9 @@
     <description>eWay-CRM API C# Library</description>
     <copyright>Copyright eWay System s.r.o. 2018-2024</copyright>
     <releaseNotes>
+1.6.9		
+Fixes exceptions security accessibility missmatch.
+
 1.6.8		
 Fixes GetObjectData missing SecurityCritical attribute, because it's implementation in Exception class
 
