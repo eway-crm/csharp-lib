@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Security;
-using System.Text;
 
 namespace eWayCRM.API.Exceptions
 {
@@ -14,9 +10,6 @@ namespace eWayCRM.API.Exceptions
     [Serializable]
     public class ResponseException : Exception
     {
-        private readonly string returnCode;
-        private readonly string methodName;
-
         /// <summary>
         /// Gets the return code.
         /// </summary>
@@ -27,7 +20,7 @@ namespace eWayCRM.API.Exceptions
         {
             get
             {
-                return returnCode;
+                return (string)Data[nameof(ReturnCode)];
             }
         }
 
@@ -41,7 +34,7 @@ namespace eWayCRM.API.Exceptions
         {
             get
             {
-                return methodName;
+                return (string)Data[nameof(MethodName)];
             }
         }
 
@@ -54,23 +47,11 @@ namespace eWayCRM.API.Exceptions
             if (string.IsNullOrEmpty(returnCode))
                 throw new ArgumentNullException(nameof(returnCode));
 
-            this.returnCode = returnCode;
-            this.methodName = methodName;
+            Data[nameof(ReturnCode)] = returnCode;
+            Data[nameof(MethodName)] = methodName;
         }
 
         protected ResponseException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            returnCode = info.GetString(nameof(ReturnCode));
-            methodName = info.GetString(nameof(MethodName));
-        }
-
-        [SecurityCritical]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue(nameof(ReturnCode), returnCode);
-            info.AddValue(nameof(MethodName), methodName);
-        }
+            : base(info, context) { }   // Data is restored by the base class
     }
 }
